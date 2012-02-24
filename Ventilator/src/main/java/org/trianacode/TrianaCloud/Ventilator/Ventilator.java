@@ -26,6 +26,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -45,12 +46,18 @@ public class Ventilator {
     private Receiver receiver;
     private Thread recThread;
 
+    /*
+     * Initialises RabbitMQ and fires up the receiver thread.
+     */
     public Ventilator() throws Exception {
         taskMap = new HashMap<String, Task>();
 
         {   //RabbitMQ init
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
+            factory.setHost("192.168.1.201");
+            factory.setUsername("guest");
+            factory.setPassword("guest");
+
             connection = factory.newConnection();
             channel = connection.createChannel();
         }
@@ -62,8 +69,11 @@ public class Ventilator {
         recThread.start();
     }
 
-    public void call(String message) throws Exception {
-        Task t = new Task("call", message);
+    /*
+     * Dispatches the task to the Task Queue
+     */
+    public void dispatchTask(Task t) throws IOException{
+        ///TODO: Read task metadata to determine which queue to send to (e.g. #.triana)
         String corrId = UUID.randomUUID().toString();
 
         BasicProperties props = new BasicProperties
@@ -73,12 +83,17 @@ public class Ventilator {
                 .build();
 
         taskMap.put(corrId, t);
-        channel.basicPublish("", requestQueueName, props, message.getBytes());
-        System.out.println("Sent job " + corrId + " with payload " + message);
+        channel.basicPublish("", requestQueueName, props, t.getData());
+        System.out.println("Sent job " + corrId + " with payload " + t.getData().toString());
+    }
+
+    ///TODO: This should be a webservice, multipart post, metadata+task http://www.discursive.com/books/cjcook/reference/http-webdav-sect-upload-multipart-post
+    public void makeTask(String message) throws Exception {
+        Task t = new Task("call", message.getBytes());
+        dispatchTask(t);
     }
 
     public void close() throws Exception {
-
         connection.close();
         recThread.join();
     }
@@ -89,7 +104,7 @@ public class Ventilator {
         try {
             v = new Ventilator();
             for (int i = 0; i < 250; i++) {
-                v.call(String.valueOf(i));
+                v.makeTask(String.valueOf(i));
             }
         } catch (Exception e) {
             e.printStackTrace();

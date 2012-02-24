@@ -44,9 +44,14 @@ public class Receiver implements Runnable {
         taskMap = t;
     }
 
+    /*
+     * Initialise RabbitMQ, set up an excluseive queue, and pass the queuename back so it can be passed on down to the Worker.
+     */
     public String init() {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost("192.168.1.201");
+        factory.setUsername("guest");
+        factory.setPassword("guest");
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
@@ -79,7 +84,9 @@ public class Receiver implements Runnable {
                     continue;
                 }
 
-                System.out.println("Job: " + t.call + " took " + t.totalTime().getTime());
+                String d = new String(t.getData());
+                
+                System.out.println("Job: " + d + " took " + t.totalTime().getTime());
 
                 ///TODO: make Task runnable. We can then stick results into the task, and let it do the approp thing.
 

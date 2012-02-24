@@ -28,17 +28,22 @@ import java.util.Date;
  * Task encapsulates a task (or job), and any relevant information (e.g. where to send results).
  */
 public class Task implements Serializable {
+    ///TODO: Task metadata class.
     public String origin;
-    public String call;
+    public byte[] data;
     public long dispatchTime;
 
-    public Task(String o, String c) {
+    public Task(String o, byte[] d) {
         origin = o;
-        call = c;
+        data = d;
         dispatchTime = System.currentTimeMillis();
     }
 
     public Date totalTime() {
         return new Date(System.currentTimeMillis() - dispatchTime);
+    }
+
+    public byte[] getData(){
+        return data;
     }
 }

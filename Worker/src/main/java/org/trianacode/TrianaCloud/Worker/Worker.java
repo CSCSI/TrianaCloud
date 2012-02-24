@@ -27,6 +27,9 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 
+import java.io.File;
+import java.net.URL;
+
 /*
  * The worker looks for tasks, and executes them.
  */
@@ -39,7 +42,9 @@ public class Worker {
         Channel channel;
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
+            factory.setHost("192.168.1.201");
+            factory.setUsername("guest");
+            factory.setPassword("guest");
 
             connection = factory.newConnection();
             channel = connection.createChannel();
@@ -50,11 +55,20 @@ public class Worker {
 
             QueueingConsumer consumer = new QueueingConsumer(channel);
             channel.basicConsume(RPC_QUEUE_NAME, false, consumer);
+            
+            System.out.println(" [x] Loading Plugins");
 
+            ClassLoader classLoader = Worker.class.getClassLoader();
+            URL[] urls = new URL[1];
+            String workingDir = System.getProperty("user.dir");
+            File f = new File(workingDir);
+            urls[0] = f.toURI().toURL();
+            TaskExecutorLoader tel = new TaskExecutorLoader(urls,classLoader);
+            
             System.out.println(" [x] Awaiting RPC requests");
-
+            
             while (true) {
-                String response = null;
+                String response = "";
 
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 
@@ -65,12 +79,14 @@ public class Worker {
                         .build();
 
                 try {
-                    String message = new String(delivery.getBody(), "UTF-8");
-                    int n = Integer.parseInt(message);
+                    ///TODO: Load all TaskExecutors, use metadata to figure out which to use.
+                    ///TODO: Create a serializable Task class. Metadata + Byte array. TaskExecutor can do what it wants with the byte array.
 
-                    System.out.println(" [.] fib(" + message + ")");
-                    response = "" + n * 2;
-                    Thread.sleep(n * 10);
+                    String message = new String(delivery.getBody());
+                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TaskExecutionExample.TaskExecutionExample");
+                    ex.setData(message.getBytes());
+
+                    response = new String(ex.executeTask());
                 } catch (Exception e) {
                     System.out.println(" [.] " + e.toString());
                     response = "";
