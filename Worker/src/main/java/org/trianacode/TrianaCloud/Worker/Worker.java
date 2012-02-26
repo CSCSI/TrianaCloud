@@ -74,9 +74,13 @@ public class Worker {
                     *.triana            (* substitutes exactly one word. dart.eddie.triana ISN'T caught)
             */
 
+            String routingKey = "*.triana";
+
+            System.out.println(" [x] Routing Key: " + routingKey);
+
             ///TODO:Grab from argv or config file
-            String queueName = channel.queueDeclare("dart.triana", false, false, true, null).getQueue();
-            channel.queueBind(queueName, "tc_exchange", "dart.triana");
+            String queueName = channel.queueDeclare(routingKey, true, false, true, null).getQueue();
+            channel.queueBind(queueName, "tc_exchange", routingKey);
 
             //Makes sure tasks are shared properly, this tells rabbit to only grab one message at a time.
             channel.basicQos(1);

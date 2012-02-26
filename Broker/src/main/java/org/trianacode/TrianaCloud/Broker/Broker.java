@@ -25,18 +25,22 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TrianaCloudServlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLDecoder;
+import java.io.StringWriter;
+import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 /**
@@ -99,51 +103,58 @@ public class Broker extends TrianaCloudServlet {
                 .replyTo(r_replyQueue)
                 .build();
 
-        String routingKey = "dart.triana";
+        String routingKey = t.routingKey;
 
         taskMap.put(corrId, t);
         channel.basicPublish(r_exchange, routingKey, props, t.getData());
-        System.out.println("Sent job " + corrId + " with payload " + t.getData().toString());
+        System.out.println("Sent job " + corrId + " with payload " + new String(t.getData(), "UTF-8"));
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String pathInfo = isolatePath(request);
+        String content = "";
         if (!pathInfo.equalsIgnoreCase("")) {
             write404Error(response, "Unknonw endpoint");
             return;
         }
-        InputStream in = request.getInputStream();
 
         try {
-            ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            byte[] bytes = new byte[4096];
-            int c;
-            while ((c = in.read(bytes)) != -1) {
-                bout.write(bytes, 0, c);
-            }
-            String content = new String(bout.toByteArray(), "UTF-8");
-            System.out.println(content);
-
-            StringTokenizer inputData = new StringTokenizer(content, "&");
-
             String data = "";
             String r_key = "";
             int numTasks = 0;
+            StringBuilder s = new StringBuilder();
 
-            while (inputData.hasMoreTokens()) {
-                String tmp = inputData.nextToken();
-                if (tmp.startsWith("task=")) {
-                    tmp = tmp.substring("task=".length());
-                    data = URLDecoder.decode(tmp, "UTF-8");
+            try {
+                List<FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+                for (FileItem item : items) {
+                    if (item.isFormField()) {
+                        // Process regular form field (input type="text|radio|checkbox|etc", select, etc).
+                        String fieldname = item.getFieldName();
+                        String fieldvalue = item.getString();
+                        if (fieldname.equalsIgnoreCase("task")) {
+                            s.append(fieldvalue);
+                        }
+                        if (fieldname.equalsIgnoreCase("routingkey")) {
+                            r_key = fieldvalue;
+                        }
+                        if (fieldname.equalsIgnoreCase("numtasks")) {
+                            numTasks = Integer.parseInt(fieldvalue);
+                        }
+                    } else {
+                        // Process form file field (input type="file").
+                        String fieldname = item.getFieldName();
+                        String filename = FilenameUtils.getName(item.getName());
+                        // ... (do your job here)
+
+                        StringWriter sw = new StringWriter();
+                        IOUtils.copy(item.getInputStream(), sw);
+                        System.out.println(sw.toString());
+                        s.append(sw.toString());
+                    }
                 }
-                if (tmp.startsWith("routingkey=")) {
-                    tmp = tmp.substring("routingkey=".length());
-                    r_key = URLDecoder.decode(tmp, "UTF-8");
-                }
-                if (tmp.startsWith("numtasks=")) {
-                    tmp = tmp.substring("numtasks=".length());
-                    numTasks = Integer.parseInt(URLDecoder.decode(tmp, "UTF-8"));
-                }
+                data = s.toString();
+            } catch (FileUploadException e) {
+                throw new ServletException("Cannot parse multipart request.", e);
             }
 
             log.debug(content);
