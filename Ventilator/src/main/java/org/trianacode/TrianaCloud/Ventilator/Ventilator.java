@@ -54,9 +54,10 @@ public class Ventilator {
 
         {   //RabbitMQ init
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("192.168.1.201");
-            factory.setUsername("guest");
-            factory.setPassword("guest");
+            factory.setHost("s-vmc.cs.cf.ac.uk");
+            factory.setPort(7000);
+            factory.setUsername("trianacloud");
+            factory.setPassword("trianacloud");
 
             connection = factory.newConnection();
             channel = connection.createChannel();
@@ -72,7 +73,7 @@ public class Ventilator {
     /*
      * Dispatches the task to the Task Queue
      */
-    public void dispatchTask(Task t) throws IOException{
+    public void dispatchTask(Task t) throws IOException {
         ///TODO: Read task metadata to determine which queue to send to (e.g. #.triana)
         String corrId = UUID.randomUUID().toString();
 

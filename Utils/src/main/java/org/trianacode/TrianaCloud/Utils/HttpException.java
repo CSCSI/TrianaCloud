@@ -19,37 +19,37 @@
  *
  */
 
-package org.trianacode.TrianaCloud;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+package org.trianacode.TrianaCloud.Utils;
 
 /**
- * Unit test for simple Ventilator.
+ * @author Andrew Harrison
+ * @version 1.0.0 Jan 15, 2011
  */
-public class AppTest
-        extends TestCase {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest(String testName) {
-        super(testName);
+public class HttpException extends Exception {
+
+    private int statusCode;
+
+
+    public HttpException(int statusCode) {
+        this.statusCode = statusCode;
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite(AppTest.class);
+    public HttpException(String s, int statusCode) {
+        super(s);
+        this.statusCode = statusCode;
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp() {
-        assertTrue(true);
+    public HttpException(String s, Throwable throwable, int statusCode) {
+        super(s, throwable);
+        this.statusCode = statusCode;
+    }
+
+    public HttpException(Throwable throwable, int statusCode) {
+        super(throwable);
+        this.statusCode = statusCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 }

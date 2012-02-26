@@ -19,37 +19,33 @@
  *
  */
 
-package org.trianacode.TrianaCloud;
+package org.trianacode.TrianaCloud.Utils;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.util.Date;
 
 /**
- * Unit test for simple Ventilator.
+ * Task encapsulates a task (or job), and any relevant information (e.g. where to send results).
+ * TODO: A toWire method that converts the necessary data to some wire format (e.g. ASN.1). Keep it simple.
  */
-public class AppTest
-        extends TestCase {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest(String testName) {
-        super(testName);
+public class Task {
+    ///TODO: Task metadata class.
+    public String origin;
+    public byte[] data;
+    public long dispatchTime;
+    public String routingKey;
+
+    public Task(String o, byte[] d, String r) {
+        origin = o;
+        data = d;
+        routingKey = r;
+        dispatchTime = System.currentTimeMillis();
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite() {
-        return new TestSuite(AppTest.class);
+    public Date totalTime() {
+        return new Date(System.currentTimeMillis() - dispatchTime);
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp() {
-        assertTrue(true);
+    public byte[] getData() {
+        return data;
     }
 }

@@ -19,12 +19,13 @@
  *
  */
 
-package org.trianacode.TrianaCloud.Ventilator;
+package org.trianacode.TrianaCloud.Broker;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import org.trianacode.TrianaCloud.Utils.Task;
 
 import java.io.IOException;
 import java.util.Map;
@@ -40,8 +41,18 @@ public class Receiver implements Runnable {
     private QueueingConsumer consumer;
     private boolean keepRunning = true;
 
-    public Receiver(Map t) {
+    private String host;
+    private int port;
+    private String user;
+    private String pass;
+
+
+    public Receiver(Map t, String host, int port, String user, String pass) {
         taskMap = t;
+        this.host = host;
+        this.port = port;
+        this.user = user;
+        this.pass = pass;
     }
 
     /*
@@ -49,16 +60,16 @@ public class Receiver implements Runnable {
      */
     public String init() {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("s-vmc.cs.cf.ac.uk");
-        factory.setPort(7000);
-        factory.setUsername("trianacloud");
-        factory.setPassword("trianacloud");
+        factory.setHost(host);
+        factory.setPort(port);
+        factory.setUsername(user);
+        factory.setPassword(pass);
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
 
             consumer = new QueueingConsumer(channel);
-            receiveQueueName = channel.queueDeclare().getQueue();
+            receiveQueueName = channel.queueDeclare("", false, false, true, null).getQueue();
             channel.basicConsume(receiveQueueName, true, consumer);
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -86,7 +97,6 @@ public class Receiver implements Runnable {
                 }
 
                 String d = new String(t.getData());
-
                 System.out.println("Job: " + d + " took " + t.totalTime().getTime());
 
                 ///TODO: make Task runnable. We can then stick results into the task, and let it do the approp thing.

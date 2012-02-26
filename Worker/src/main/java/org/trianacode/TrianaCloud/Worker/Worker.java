@@ -31,7 +31,7 @@ import java.io.File;
 import java.net.URL;
 
 /*
- * The worker looks for tasks, and executes them.
+ * The worker looks for tasks, and executes them. Easy.
  */
 
 public class Worker {
@@ -42,31 +42,63 @@ public class Worker {
         Channel channel;
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("192.168.1.201");
-            factory.setUsername("guest");
-            factory.setPassword("guest");
+            factory.setHost("s-vmc.cs.cf.ac.uk");
+            factory.setPort(7000);
+            factory.setUsername("trianacloud");
+            factory.setPassword("trianacloud");
 
             connection = factory.newConnection();
             channel = connection.createChannel();
 
-            channel.queueDeclare(RPC_QUEUE_NAME, false, false, false, null);
+            //Use tc_exchange (TrianaCloud_exchange) in the topic config.
+            ///TODO:Grab this from argv or config file
+            channel.exchangeDeclare("tc_exchange", "topic");
 
+            /*
+            "dart.triana" is the queue name. If the task is covered by multiple topic bindings, it's duplicated. If
+            there are multiple queues for a topic binding, it's duplicated. This could be useful for debugging, logging
+            and auditing. This could also be used to implement validation, which inherently ensures that the two
+            (or more) duplicate tasks to compare and validate aren't executed on the same machine. But for a standard
+            single worker, single task config, follow the rule of thumb.
+
+            Rule of thumb: if the topic binding is the same, the queue name should be the same.
+            If you're using wildcards in a topic name, MAKE SURE other topics/queues don't collide.
+
+            e.g.:
+                BAD:
+                    dart.triana on worker1
+                    #.triana on worker2
+
+                GOOD:
+                    dart.eddie.triana   (this will grab those with this exact topic)
+                    *.triana            (* substitutes exactly one word. dart.eddie.triana ISN'T caught)
+            */
+
+            ///TODO:Grab from argv or config file
+            String queueName = channel.queueDeclare("dart.triana", false, false, true, null).getQueue();
+            channel.queueBind(queueName, "tc_exchange", "dart.triana");
+
+            //Makes sure tasks are shared properly, this tells rabbit to only grab one message at a time.
             channel.basicQos(1);
 
             QueueingConsumer consumer = new QueueingConsumer(channel);
-            channel.basicConsume(RPC_QUEUE_NAME, false, consumer);
-            
+            channel.basicConsume(queueName, false, consumer);
+
             System.out.println(" [x] Loading Plugins");
 
             ClassLoader classLoader = Worker.class.getClassLoader();
+
+            ///TODO:Make sure there's not a better way to do this
             URL[] urls = new URL[1];
+            ///TODO:Grab a plugin dir from the config file
             String workingDir = System.getProperty("user.dir");
             File f = new File(workingDir);
             urls[0] = f.toURI().toURL();
-            TaskExecutorLoader tel = new TaskExecutorLoader(urls,classLoader);
-            
+            //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
+            TaskExecutorLoader tel = new TaskExecutorLoader(urls, classLoader);
+
             System.out.println(" [x] Awaiting RPC requests");
-            
+
             while (true) {
                 String response = "";
 
@@ -79,20 +111,26 @@ public class Worker {
                         .build();
 
                 try {
-                    ///TODO: Load all TaskExecutors, use metadata to figure out which to use.
-                    ///TODO: Create a serializable Task class. Metadata + Byte array. TaskExecutor can do what it wants with the byte array.
+                    ///TODO: Use metadata to figure out which Executor to use.
+                    ///TODO: Figure out what wire-protocol to use. Something simple like ASN.1? Or a subset of it?
 
                     String message = new String(delivery.getBody());
                     TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TaskExecutionExample.TaskExecutionExample");
-                    ex.setData(message.getBytes());
 
+                    ex.setData(message.getBytes());
                     response = new String(ex.executeTask());
                 } catch (Exception e) {
+                    ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
+                    ///TODO: Two new exeptions for the task executor, one to indicate that the execution failed due to
+                    ///     the data, one to indicate some other error. The former would be ack'ed and sent back, as
+                    ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
+                    ///     config, random error, missile strike).
                     System.out.println(" [.] " + e.toString());
                     response = "";
                 } finally {
                     channel.basicPublish("", props.getReplyTo(), replyProps, response.getBytes("UTF-8"));
-
+                    //Acknowledge that the task has been received. If a crash happens before here, then Rabbit automagically
+                    //sticks the message back in the queue.
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                 }
             }

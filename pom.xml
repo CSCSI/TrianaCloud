@@ -28,6 +28,8 @@
         <module>Ventilator</module>
         <module>Worker</module>
         <module>TaskExecutionExample</module>
+        <module>Broker</module>
+        <module>Utils</module>
     </modules>
     <groupId>org.trianacode.TrianaCloud</groupId>
     <version>1.0</version>

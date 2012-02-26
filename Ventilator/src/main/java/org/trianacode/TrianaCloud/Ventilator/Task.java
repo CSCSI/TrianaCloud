@@ -43,7 +43,7 @@ public class Task implements Serializable {
         return new Date(System.currentTimeMillis() - dispatchTime);
     }
 
-    public byte[] getData(){
+    public byte[] getData() {
         return data;
     }
 }
