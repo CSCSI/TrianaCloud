@@ -1,0 +1,42 @@
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+    <listener>
+        <listener-class>org.trianacode.TrianaCloud.Broker.BrokerServletContextListener</listener-class>
+    </listener>
+    <display-name>Archetype Created Web Application</display-name>
+    <context-param>
+        <param-name>rabbitmq.host</param-name>
+        <param-value>s-vmc.cs.cf.ac.uk</param-value>
+    </context-param>
+    <context-param>
+        <param-name>rabbitmq.port</param-name>
+        <param-value>7000</param-value>
+    </context-param>
+    <context-param>
+        <param-name>rabbitmq.user</param-name>
+        <param-value>trianacloud</param-value>
+    </context-param>
+    <context-param>
+        <param-name>rabbitmq.pass</param-name>
+        <param-value>trianacloud</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Broker</servlet-name>
+        <servlet-class>org.trianacode.TrianaCloud.Broker.Broker</servlet-class>
+        <init-param>
+            <param-name>rabbitmq.queue</param-name>
+            <param-value>task_dispatch</param-value>
+        </init-param>
+        <init-param>
+            <param-name>rabbitmq.exchange</param-name>
+            <param-value>tc_exchange</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Broker</servlet-name>
+        <url-pattern>/broker</url-pattern>
+    </servlet-mapping>
+</web-app>

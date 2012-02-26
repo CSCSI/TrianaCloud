@@ -30,6 +30,7 @@
         <module>TaskExecutionExample</module>
         <module>Broker</module>
         <module>Utils</module>
+        <module>TrianaTaskExecutor</module>
     </modules>
     <groupId>org.trianacode.TrianaCloud</groupId>
     <version>1.0</version>

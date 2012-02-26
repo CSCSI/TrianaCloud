@@ -30,7 +30,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TrianaCloudServlet;
 
@@ -38,7 +37,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -119,7 +118,7 @@ public class Broker extends TrianaCloudServlet {
         }
 
         try {
-            String data = "";
+            byte[] data = null;
             String r_key = "";
             int numTasks = 0;
             StringBuilder s = new StringBuilder();
@@ -145,21 +144,41 @@ public class Broker extends TrianaCloudServlet {
                         String fieldname = item.getFieldName();
                         String filename = FilenameUtils.getName(item.getName());
                         // ... (do your job here)
+                        
+                        InputStream is = item.getInputStream();
 
-                        StringWriter sw = new StringWriter();
-                        IOUtils.copy(item.getInputStream(), sw);
-                        System.out.println(sw.toString());
-                        s.append(sw.toString());
+                        long length = item.getSize();
+
+                        if (length > Integer.MAX_VALUE) {
+                            // File is too large
+                            throw new Exception("File too large");
+                        }
+
+                        // Create the byte array to hold the data
+                        byte[] bytes = new byte[(int)length];
+
+                        // Read in the bytes
+                        int offset = 0;
+                        int numRead = 0;
+                        while (offset < bytes.length
+                                && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                            offset += numRead;
+                        }
+
+                        // Ensure all the bytes have been read in
+                        if (offset < bytes.length) {
+                            throw new IOException("Could not completely read file "+length);
+                        }
+                        data = bytes;
                     }
                 }
-                data = s.toString();
             } catch (FileUploadException e) {
                 throw new ServletException("Cannot parse multipart request.", e);
             }
 
             log.debug(content);
             for (int i = 0; i < numTasks; i++) {
-                dispatchTask(new Task("Broker[" + i + "]", ("[" + i + "] " + data).getBytes(), r_key));
+                dispatchTask(new Task("Broker[" + i + "]", data, r_key));
             }
             //Task t = new Task("call", content.getBytes(),"dart.triana");
             //dispatchTask(t);

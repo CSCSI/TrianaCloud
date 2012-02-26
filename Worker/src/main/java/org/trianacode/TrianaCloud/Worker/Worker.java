@@ -118,10 +118,11 @@ public class Worker {
                     ///TODO: Use metadata to figure out which Executor to use.
                     ///TODO: Figure out what wire-protocol to use. Something simple like ASN.1? Or a subset of it?
 
-                    String message = new String(delivery.getBody());
-                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TaskExecutionExample.TaskExecutionExample");
+                    //String message = new String(delivery.getBody());
+                    byte[] message = delivery.getBody();
+                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
 
-                    ex.setData(message.getBytes());
+                    ex.setData(message);
                     response = new String(ex.executeTask());
                 } catch (Exception e) {
                     ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
@@ -130,6 +131,7 @@ public class Worker {
                     ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
                     ///     config, random error, missile strike).
                     System.out.println(" [.] " + e.toString());
+                    e.printStackTrace();
                     response = "";
                 } finally {
                     channel.basicPublish("", props.getReplyTo(), replyProps, response.getBytes("UTF-8"));
