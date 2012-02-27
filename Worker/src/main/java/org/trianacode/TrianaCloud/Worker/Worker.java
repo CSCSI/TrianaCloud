@@ -98,6 +98,7 @@ public class Worker {
             ///TODO:Grab a plugin dir from the config file
             String workingDir = System.getProperty("user.dir");
             File f = new File(workingDir);
+			System.out.println("Addon path : " + f.getAbsolutePath())
             urls[0] = f.toURI().toURL();
             //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
             TaskExecutorLoader tel = new TaskExecutorLoader(urls, classLoader);
