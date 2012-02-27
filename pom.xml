@@ -25,7 +25,6 @@
     <artifactId>TrianaCloud</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>Ventilator</module>
         <module>Worker</module>
         <module>TaskExecutionExample</module>
         <module>Broker</module>
