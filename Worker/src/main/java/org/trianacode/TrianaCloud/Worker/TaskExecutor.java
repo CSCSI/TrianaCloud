@@ -21,14 +21,10 @@
 
 package org.trianacode.TrianaCloud.Worker;
 
-/**
- * Created by IntelliJ IDEA.
- * User: keyz
- * Date: 24/02/12
- * Time: 19:34
- * To change this template use File | Settings | File Templates.
- */
+import org.trianacode.TrianaCloud.Utils.Task;
+
 public abstract class TaskExecutor {
     abstract public byte[] executeTask() throws TaskExecutionException;
-    abstract public void setData(byte[] data);
+
+    abstract public void setTask(Task task);
 }

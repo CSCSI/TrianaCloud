@@ -26,6 +26,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import org.trianacode.TrianaCloud.Utils.Task;
+import org.trianacode.TrianaCloud.Utils.TaskOps;
 
 import java.io.File;
 import java.net.URL;
@@ -35,7 +37,6 @@ import java.net.URL;
  */
 
 public class Worker {
-    private static final String RPC_QUEUE_NAME = "task_dispatch";
 
     public static void main(String[] argv) {
         Connection connection = null;
@@ -122,7 +123,9 @@ public class Worker {
                     byte[] message = delivery.getBody();
                     TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
 
-                    ex.setData(message);
+                    Task t = TaskOps.decodeTask(message);
+                    ex.setTask(t);
+
                     response = new String(ex.executeTask());
                 } catch (Exception e) {
                     ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.

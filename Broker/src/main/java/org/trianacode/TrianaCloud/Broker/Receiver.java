@@ -97,7 +97,7 @@ public class Receiver implements Runnable {
                 }
 
                 String d = new String(t.getData());
-                System.out.println("Job: " + d + " took " + t.totalTime().getTime());
+                System.out.println("Job: " + d + " took " + t.getTotalTime().getTime());
 
                 ///TODO: make Task runnable. We can then stick results into the task, and let it do the approp thing.
 

@@ -21,31 +21,64 @@
 
 package org.trianacode.TrianaCloud.Utils;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import java.util.Date;
 
 /**
  * Task encapsulates a task (or job), and any relevant information (e.g. where to send results).
  * TODO: A toWire method that converts the necessary data to some wire format (e.g. ASN.1). Keep it simple.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Task {
     ///TODO: Task metadata class.
     public String origin;
+    public String name;
     public byte[] data;
     public long dispatchTime;
     public String routingKey;
 
-    public Task(String o, byte[] d, String r) {
-        origin = o;
-        data = d;
-        routingKey = r;
-        dispatchTime = System.currentTimeMillis();
+    public String getOrigin() {
+        return origin;
     }
 
-    public Date totalTime() {
+    public String getName() {
+        return name;
+    }
+
+    public long getDispatchTime() {
+        return dispatchTime;
+    }
+
+    public String getRoutingKey() {
+        return routingKey;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDispatchTime(long dispatchTime) {
+        this.dispatchTime = dispatchTime;
+    }
+
+    public void setRoutingKey(String routingKey) {
+        this.routingKey = routingKey;
+    }
+
+    public Date getTotalTime() {
         return new Date(System.currentTimeMillis() - dispatchTime);
     }
 
     public byte[] getData() {
         return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 }

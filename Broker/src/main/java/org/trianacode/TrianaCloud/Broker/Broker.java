@@ -31,6 +31,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.trianacode.TrianaCloud.Utils.Task;
+import org.trianacode.TrianaCloud.Utils.TaskOps;
 import org.trianacode.TrianaCloud.Utils.TrianaCloudServlet;
 
 import javax.servlet.ServletException;
@@ -105,8 +106,8 @@ public class Broker extends TrianaCloudServlet {
         String routingKey = t.routingKey;
 
         taskMap.put(corrId, t);
-        channel.basicPublish(r_exchange, routingKey, props, t.getData());
-        System.out.println("Sent job " + corrId + " with payload " + new String(t.getData(), "UTF-8"));
+        channel.basicPublish(r_exchange, routingKey, props, TaskOps.encodeTask(t));
+        System.out.println("Sent job " + corrId + " with payload " + t.getName());
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -120,6 +121,7 @@ public class Broker extends TrianaCloudServlet {
         try {
             byte[] data = null;
             String r_key = "";
+            String fname = "";
             int numTasks = 0;
             StringBuilder s = new StringBuilder();
 
@@ -144,7 +146,9 @@ public class Broker extends TrianaCloudServlet {
                         String fieldname = item.getFieldName();
                         String filename = FilenameUtils.getName(item.getName());
                         // ... (do your job here)
-                        
+
+                        fname = filename;
+
                         InputStream is = item.getInputStream();
 
                         long length = item.getSize();
@@ -155,19 +159,19 @@ public class Broker extends TrianaCloudServlet {
                         }
 
                         // Create the byte array to hold the data
-                        byte[] bytes = new byte[(int)length];
+                        byte[] bytes = new byte[(int) length];
 
                         // Read in the bytes
                         int offset = 0;
                         int numRead = 0;
                         while (offset < bytes.length
-                                && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
                             offset += numRead;
                         }
 
                         // Ensure all the bytes have been read in
                         if (offset < bytes.length) {
-                            throw new IOException("Could not completely read file "+length);
+                            throw new IOException("Could not completely read file " + length);
                         }
                         data = bytes;
                     }
@@ -178,7 +182,13 @@ public class Broker extends TrianaCloudServlet {
 
             log.debug(content);
             for (int i = 0; i < numTasks; i++) {
-                dispatchTask(new Task("Broker[" + i + "]", data, r_key));
+                Task t = new Task();
+                t.setData(data);
+                t.setName(fname);
+                t.setOrigin("Broker");
+                t.setDispatchTime(System.currentTimeMillis());
+                t.setRoutingKey(r_key);
+                dispatchTask(t);
             }
             //Task t = new Task("call", content.getBytes(),"dart.triana");
             //dispatchTask(t);
