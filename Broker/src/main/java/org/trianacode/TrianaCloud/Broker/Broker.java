@@ -75,7 +75,7 @@ public class Broker extends TrianaCloudServlet {
             }
             r_replyQueue = (String) getServletContext().getAttribute("replyQueue");
             if (r_replyQueue == null) {
-                throw new ServletException("No RabbitMQ reply queue defined in init parameter. Cannot go on.");
+                throw new ServletException("No RabbitMQ reply queue defined in init parameter. Cannot 	go on.");
             }
 
             taskMap = (Map<String, Task>) getServletContext().getAttribute("taskmap");
@@ -103,7 +103,7 @@ public class Broker extends TrianaCloudServlet {
                 .replyTo(r_replyQueue)
                 .build();
 
-        String routingKey = t.routingKey;
+        String routingKey = t.getRoutingKey();
 
         taskMap.put(corrId, t);
         channel.basicPublish(r_exchange, routingKey, props, TaskOps.encodeTask(t));
