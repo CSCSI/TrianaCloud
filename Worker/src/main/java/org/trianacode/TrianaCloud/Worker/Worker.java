@@ -27,6 +27,8 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
 import org.trianacode.TrianaCloud.Utils.Task;
+import org.trianacode.TrianaCloud.Utils.TaskExecutor;
+import org.trianacode.TrianaCloud.Utils.TaskExecutorLoader;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
 
 import java.io.File;
@@ -37,6 +39,7 @@ import java.net.URL;
  */
 
 public class Worker {
+    private static boolean continueLoop = true;
 
     public static void main(String[] argv) {
         Connection connection = null;
@@ -98,14 +101,14 @@ public class Worker {
             ///TODO:Grab a plugin dir from the config file
             String workingDir = System.getProperty("user.dir");
             File f = new File(workingDir);
-			System.out.println("Addon path : " + f.getAbsolutePath())
+            System.out.println("Addon path : " + f.getAbsolutePath());
             urls[0] = f.toURI().toURL();
             //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
             TaskExecutorLoader tel = new TaskExecutorLoader(urls, classLoader);
 
             System.out.println(" [x] Awaiting RPC requests");
 
-            while (true) {
+            while (continueLoop) {
                 String response = "";
 
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
@@ -122,7 +125,8 @@ public class Worker {
 
                     //String message = new String(delivery.getBody());
                     byte[] message = delivery.getBody();
-                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
+                    //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
+                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TaskExecutionExample.TaskExecutionExample");
 
                     Task t = TaskOps.decodeTask(message);
                     ex.setTask(t);

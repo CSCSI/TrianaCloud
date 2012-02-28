@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>org.trianacode.TrianaCloud</groupId>
-            <artifactId>Worker</artifactId>
+            <artifactId>Utils</artifactId>
             <version>1.0</version>
         </dependency>
     </dependencies>

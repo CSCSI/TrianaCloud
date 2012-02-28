@@ -24,8 +24,8 @@ package org.trianacode.TrianaCloud.TrianaTaskExecutor;
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
 import org.trianacode.TrianaCloud.Utils.Task;
-import org.trianacode.TrianaCloud.Worker.TaskExecutionException;
-import org.trianacode.TrianaCloud.Worker.TaskExecutor;
+import org.trianacode.TrianaCloud.Utils.TaskExecutionException;
+import org.trianacode.TrianaCloud.Utils.TaskExecutor;
 import org.trianacode.shiwa.bundle.TrianaBundle;
 
 import java.io.*;

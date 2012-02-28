@@ -16,15 +16,11 @@
  *  * You should have received a copy of the GNU General Public License
  *  * along with this program; if not, write to the Free Software
  *  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *  
+ *
  */
 
-package org.trianacode.TrianaCloud.Worker;
+package org.trianacode.TrianaCloud.Utils;
 
-import org.trianacode.TrianaCloud.Utils.Task;
-
-public abstract class TaskExecutor {
-    abstract public byte[] executeTask() throws TaskExecutionException;
-
-    abstract public void setTask(Task task);
+public class TaskExecutionException extends Exception {
+///TODO: This class.
 }

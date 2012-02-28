@@ -21,19 +21,20 @@
 
 package org.trianacode.TrianaCloud.TaskExecutionExample;
 
-import org.trianacode.TrianaCloud.Worker.TaskExecutionException;
-import org.trianacode.TrianaCloud.Worker.TaskExecutor;
+import org.trianacode.TrianaCloud.Utils.Task;
+import org.trianacode.TrianaCloud.Utils.TaskExecutionException;
+import org.trianacode.TrianaCloud.Utils.TaskExecutor;
 
-import java.lang.String;
 
 public class TaskExecutionExample extends TaskExecutor {
+    private Task task;
     private String data;
 
     @Override
     public byte[] executeTask() throws TaskExecutionException {
-        String response = "";
+        String response;
         System.out.println(" [.] data(" + data + ")");
-        response = data.toUpperCase();
+        response = task.getName().toUpperCase();
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
@@ -46,7 +47,8 @@ public class TaskExecutionExample extends TaskExecutor {
     }
 
     @Override
-    public void setData(byte[] data) {
-        this.data = new String(data);
+    public void setTask(Task t) {
+        this.task = t;
+        this.data = t.getName();
     }
 }

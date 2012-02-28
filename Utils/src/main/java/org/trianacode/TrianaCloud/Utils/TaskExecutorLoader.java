@@ -19,7 +19,7 @@
  *
  */
 
-package org.trianacode.TrianaCloud.Worker;
+package org.trianacode.TrianaCloud.Utils;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -37,7 +37,7 @@ public class TaskExecutorLoader extends URLClassLoader {
 
     File[] jars;
     HashMap<String, Class> addons = new HashMap<String, Class>();
-    ArrayList<Class> services = new ArrayList<Class>();
+    //ArrayList<Class> services = new ArrayList<Class>();
 
     public TaskExecutorLoader(URL[] urls, ClassLoader classLoader) {
         super(urls, classLoader);
@@ -65,7 +65,7 @@ public class TaskExecutorLoader extends URLClassLoader {
         });
         System.out.println("Found " + jars.length + " jars in addon folder.");
 
-                URL[] urls = new URL[jars.length];
+        URL[] urls = new URL[jars.length];
         for (int i = 0; i < jars.length; i++) {
             File jar = jars[i];
             try {
@@ -115,12 +115,12 @@ public class TaskExecutorLoader extends URLClassLoader {
         }
     }
 
-    public TaskExecutor getExecutor(String exClass) throws IllegalAccessException, InstantiationException{
+    public TaskExecutor getExecutor(String exClass) throws IllegalAccessException, InstantiationException {
         Class c = addons.get(exClass);
-        if(c!=null){
+        if (c != null) {
             Object o = c.newInstance();
-            if(o instanceof TaskExecutor){
-                return (TaskExecutor)o;
+            if (o instanceof TaskExecutor) {
+                return (TaskExecutor) o;
             }
         }
         return null;
