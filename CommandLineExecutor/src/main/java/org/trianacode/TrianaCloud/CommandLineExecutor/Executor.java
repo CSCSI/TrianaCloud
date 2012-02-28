@@ -1,19 +1,16 @@
 package org.trianacode.TrianaCloud.CommandLineExecutor;
 
-import org.trianacode.TrianaCloud.Utils.Task;
-import org.trianacode.TrianaCloud.Utils.TaskExecutionException;
-import org.trianacode.TrianaCloud.Utils.TaskExecutor;
+import org.trianacode.TrianaCloud.Utils.*;
 
 import java.io.*;
 
 /**
  * Hello world!
- *
  */
-public class Executor extends TaskExecutor 
-{
+public class Executor extends TaskExecutor {
     private Task task;
     File temp;
+
     @Override
     public byte[] executeTask() throws TaskExecutionException {
         try {
@@ -23,24 +20,33 @@ public class Executor extends TaskExecutor
                     (new InputStreamReader(p.getInputStream()));
             BufferedReader bre = new BufferedReader
                     (new InputStreamReader(p.getErrorStream()));
+
+            StringBuilder b = new StringBuilder();
+
             while ((line = bri.readLine()) != null) {
-                System.out.println(line);
+                b.append(line);
             }
             bri.close();
-            StringBuilder b = new StringBuilder();
             while ((line = bre.readLine()) != null) {
                 b.append(line);
             }
             bre.close();
             p.waitFor();
-            System.out.println(b.toString()+"Done.");
-            task.setName(b.toString());
-        }
-        catch (Exception err) {
+
+            task.setReturnDataType("String");
+            String retData = b.toString();
+
+            task.setReturnData(retData.getBytes());
+            task.setReturnDataMD5(MD5.getMD5Hash(retData.getBytes()));
+
+            System.out.println(new String(task.getReturnData(), "UTF-8") + "Done.");
+            return TaskOps.encodeTask(task);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception err) {
             err.printStackTrace();
         }
-
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+        return new byte[0];
     }
 
     @Override

@@ -78,7 +78,7 @@ public class Worker {
                     *.triana            (* substitutes exactly one word. dart.eddie.triana ISN'T caught)
             */
 
-            String routingKey = "*.triana";
+            String routingKey = "*.kieran";
 
             System.out.println(" [x] Routing Key: " + routingKey);
 
@@ -109,7 +109,7 @@ public class Worker {
             System.out.println(" [x] Awaiting RPC requests");
 
             while (continueLoop) {
-                String response = "";
+                byte[] response = new byte[0];
 
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 
@@ -131,7 +131,7 @@ public class Worker {
                     Task t = TaskOps.decodeTask(message);
                     ex.setTask(t);
 
-                    response = new String(ex.executeTask());
+                    response = ex.executeTask();
                 } catch (Exception e) {
                     ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
                     ///TODO: Two new exeptions for the task executor, one to indicate that the execution failed due to
@@ -140,9 +140,9 @@ public class Worker {
                     ///     config, random error, missile strike).
                     System.out.println(" [.] " + e.toString());
                     e.printStackTrace();
-                    response = "";
+                    response = new byte[0];
                 } finally {
-                    channel.basicPublish("", props.getReplyTo(), replyProps, response.getBytes("UTF-8"));
+                    channel.basicPublish("", props.getReplyTo(), replyProps, response);
                     //Acknowledge that the task has been received. If a crash happens before here, then Rabbit automagically
                     //sticks the message back in the queue.
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);

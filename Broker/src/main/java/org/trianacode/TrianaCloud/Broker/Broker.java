@@ -40,8 +40,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -54,7 +54,8 @@ public class Broker extends TrianaCloudServlet {
 
     public static final String RABBIT_QUEUE = "rabbitmq.queue";
     public static final String EXCHANGE = "rabbitmq.exchange";
-    public static Map<String, Task> taskMap;
+    public static ConcurrentHashMap<String, Task> taskMap;
+
 
     private String r_replyQueue;
     private String r_exchange;
@@ -78,7 +79,7 @@ public class Broker extends TrianaCloudServlet {
                 throw new ServletException("No RabbitMQ reply queue defined in init parameter. Cannot 	go on.");
             }
 
-            taskMap = (Map<String, Task>) getServletContext().getAttribute("taskmap");
+            taskMap = (ConcurrentHashMap<String, Task>) getServletContext().getAttribute("taskmap");
             if (taskMap == null) {
                 throw new ServletException("Couldn't get Taskmap");
             }

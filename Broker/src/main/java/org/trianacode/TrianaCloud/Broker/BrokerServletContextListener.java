@@ -27,7 +27,6 @@ import org.trianacode.TrianaCloud.Utils.Task;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,7 +39,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BrokerServletContextListener implements ServletContextListener {
 
     private static Receiver receiver;
-    private static Map<String, Task> taskMap;
+    private static ConcurrentHashMap<String, Task> taskMap;
+    private static ConcurrentHashMap<String, Task> resultMap;
     private static Thread receiverThread;
     private static String replyQueue;
 
@@ -60,7 +60,9 @@ public class BrokerServletContextListener implements ServletContextListener {
         pass = sc.getInitParameter("rabbitmq.pass");
 
         taskMap = new ConcurrentHashMap<String, Task>();
-        receiver = new Receiver(taskMap, host, port, user, pass);
+        resultMap = new ConcurrentHashMap<String, Task>();
+
+        receiver = new Receiver(taskMap, resultMap, host, port, user, pass);
         replyQueue = receiver.init();
 
         receiverThread = new Thread(receiver);
@@ -75,6 +77,7 @@ public class BrokerServletContextListener implements ServletContextListener {
         sc.setAttribute("RabbitMQConnectionFactory", factory);
         sc.setAttribute("taskmap", taskMap);
         sc.setAttribute("replyQueue", replyQueue);
+        sc.setAttribute("resultMap", resultMap);
     }
 
     public void contextDestroyed(ServletContextEvent event) {

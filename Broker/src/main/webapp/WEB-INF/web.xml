@@ -3,9 +3,6 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-    <listener>
-        <listener-class>org.trianacode.TrianaCloud.Broker.BrokerServletContextListener</listener-class>
-    </listener>
     <display-name>Archetype Created Web Application</display-name>
     <context-param>
         <param-name>rabbitmq.host</param-name>
@@ -23,6 +20,9 @@
         <param-name>rabbitmq.pass</param-name>
         <param-value>trianacloud</param-value>
     </context-param>
+    <listener>
+        <listener-class>org.trianacode.TrianaCloud.Broker.BrokerServletContextListener</listener-class>
+    </listener>
     <servlet>
         <servlet-name>Broker</servlet-name>
         <servlet-class>org.trianacode.TrianaCloud.Broker.Broker</servlet-class>
@@ -35,6 +35,14 @@
             <param-value>tc_exchange</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>Results</servlet-name>
+        <servlet-class>org.trianacode.TrianaCloud.Broker.Results</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Results</servlet-name>
+        <url-pattern>/results</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Broker</servlet-name>
         <url-pattern>/broker</url-pattern>

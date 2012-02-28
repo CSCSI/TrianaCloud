@@ -37,6 +37,31 @@ public class Task {
     private byte[] _data;
     private long _dispatchTime;
     private String _routingKey;
+    private String _dataType;
+    private byte[] _returnData;
+    private String _returnDataType;
+    private String _dataMD5;
+    private String _returnDataMD5;
+
+    public String getDataMD5() {
+        return _dataMD5;
+    }
+
+    public String getReturnDataMD5() {
+        return _returnDataMD5;
+    }
+
+    public String getDataType() {
+        return _dataType;
+    }
+
+    public byte[] getReturnData() {
+        return _returnData;
+    }
+
+    public String getReturnDataType() {
+        return _returnDataType;
+    }
 
     public String getOrigin() {
         return _origin;
@@ -52,6 +77,26 @@ public class Task {
 
     public String getRoutingKey() {
         return _routingKey;
+    }
+
+    public void setDataMD5(String md5) {
+        this._dataMD5 = md5;
+    }
+
+    public void setReturnDataMD5(String md5) {
+        this._returnDataMD5 = md5;
+    }
+
+    public void setDataType(String d) {
+        this._dataType = d;
+    }
+
+    public void setReturnData(byte[] b) {
+        this._returnData = b;
+    }
+
+    public void setReturnDataType(String d) {
+        this._returnDataType = d;
     }
 
     public void setOrigin(String origin) {

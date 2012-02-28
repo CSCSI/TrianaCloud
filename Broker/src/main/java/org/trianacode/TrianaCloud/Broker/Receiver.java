@@ -25,17 +25,21 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import org.trianacode.TrianaCloud.Utils.MD5;
 import org.trianacode.TrianaCloud.Utils.Task;
+import org.trianacode.TrianaCloud.Utils.TaskOps;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * The Receiver is a background thread responsible for connecting results back to the task.
  */
 public class Receiver implements Runnable {
+    ///TODO: is taskmap necessary?
     private String receiveQueueName;
-    private Map<String, Task> taskMap;
+    private ConcurrentHashMap<String, Task> taskMap;
+    private ConcurrentHashMap<String, Task> resultsMap;
     private Connection connection;
     private Channel channel;
     private QueueingConsumer consumer;
@@ -47,8 +51,9 @@ public class Receiver implements Runnable {
     private String pass;
 
 
-    public Receiver(Map t, String host, int port, String user, String pass) {
+    public Receiver(ConcurrentHashMap t, ConcurrentHashMap r, String host, int port, String user, String pass) {
         taskMap = t;
+        resultsMap = r;
         this.host = host;
         this.port = port;
         this.user = user;
@@ -91,14 +96,26 @@ public class Receiver implements Runnable {
                 String corrid = delivery.getProperties().getCorrelationId();
 
                 Task t = taskMap.get(corrid);
-
+                Task r = TaskOps.decodeTask(delivery.getBody());
                 if (t == null) {
                     continue;
                 }
 
-                System.out.println("Job: " + t.getName() + " took " + t.getTotalTime().getTime());
+                resultsMap.put(corrid, r);
 
-                ///TODO: make Task runnable. We can then stick results into the task, and let it do the approp thing.
+                System.out.println("Job: " + t.getName() + " took " + t.getTotalTime().getTime());
+                if (r.getReturnDataType().equalsIgnoreCase("string")) {
+                    System.out.println("Return Data MD5");
+                    System.out.println("Expected: " + r.getReturnDataMD5());
+                    System.out.println("Got     : " + MD5.getMD5Hash(r.getReturnData()));
+                    System.out.println("Return Data:");
+                    String d = new String(r.getReturnData(), "UTF-8");
+                    System.out.println(d);
+                } else {
+                    System.out.println("Return Data MD5");
+                    System.out.println("Expected: " + r.getReturnDataMD5());
+                    System.out.println("Got     : " + MD5.getMD5Hash(r.getReturnData()));
+                }
 
                 taskMap.remove(corrid);
             } catch (Exception e) {

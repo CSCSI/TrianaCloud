@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title>Result Viewer</title>
+    <script src="js/jquery-1.7.1.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            // twitter api's base url
+            var url = "/Broker/test.json";
+
+            // when the user clicks the button
+            $.getJSON(url, function (json) {
+                // this is where we can loop through the results in the json object
+                $.each(json, function (i, result) {
+                    $("#results").append('<p>"' + result.origin + ' ' + result.totalTime + '</p>');
+                    if (result.dataType == 'String') {
+                        $("#results").append('<pre>' + result.data + '</pre>');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="results">
+</div>
+</body>
+</html>
