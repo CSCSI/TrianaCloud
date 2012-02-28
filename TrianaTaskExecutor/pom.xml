@@ -94,6 +94,10 @@
             <scope>system</scope>
             <systemPath>C:\\Users\keyz\\Desktop\\Triana\\triana-shiwa-4.0.1-SNAPSHOT-jar-with-dependencies.jar
             </systemPath>
+
+            <!--<groupId>org.trianacode</groupId>-->
+            <!--<artifactId>triana-shiwa</artifactId>-->
+            <!--<version>4.0.1-SNAPSHOT</version>-->
         </dependency>
         <!--<dependency>
             <groupId>org.shiwa.desktop</groupId>
