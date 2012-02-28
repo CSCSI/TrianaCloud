@@ -21,14 +21,11 @@
 
 package org.trianacode.TrianaCloud.TrianaTaskExecutor;
 
-import org.shiwa.desktop.data.description.SHIWABundle;
-import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
-import org.trianacode.TrianaCloud.Utils.Task;
-import org.trianacode.TrianaCloud.Utils.TaskExecutionException;
-import org.trianacode.TrianaCloud.Utils.TaskExecutor;
-import org.trianacode.shiwa.bundle.TrianaBundle;
+import org.trianacode.TrianaCloud.Utils.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Hello world!
@@ -39,6 +36,10 @@ public class Executor extends TaskExecutor {
 
     @Override
     public byte[] executeTask() throws TaskExecutionException {
+        ///TODO: pass temp to triana via shiwa bundles.
+        ///TODO: get the returned file, read it into task.setReturnData(), setReturnType to binary
+        ///TODO return the task as below
+        /*
         try {
             SHIWABundle b = new SHIWABundle(temp);
             TrianaBundle tb = new TrianaBundle();
@@ -82,8 +83,16 @@ public class Executor extends TaskExecutor {
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-
-        return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
+           */
+        try {
+            task.setReturnDataType("binary");
+            task.setReturnData(task.getData());
+            task.setReturnDataMD5(MD5.getMD5Hash(task.getReturnData()));
+            return TaskOps.encodeTask(task);  //To change body of implemented methods use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return new byte[0];
+        }
     }
 
     @Override

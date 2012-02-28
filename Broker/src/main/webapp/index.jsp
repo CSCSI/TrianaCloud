@@ -17,6 +17,8 @@
     Number of tasks:</br>
     <textarea id="numtasks" name="numtasks" rows="1" cols="5"></textarea>  </br>
     <br/>
+    Name of tasks:</br>
+    <textarea id="name" name="name" rows="1" cols="5"></textarea>  </br>
     <input type="submit" value="Go"/>
 </form>
 </body>

@@ -38,6 +38,7 @@ public class Task {
     private long _dispatchTime;
     private String _routingKey;
     private String _dataType;
+    private String _fileName;
     private byte[] _returnData;
     private String _returnDataType;
     private String _dataMD5;
@@ -77,6 +78,14 @@ public class Task {
 
     public String getRoutingKey() {
         return _routingKey;
+    }
+
+    public String getFileName() {
+        return _fileName;
+    }
+
+    public void setFileName(String f) {
+        this._fileName = f;
     }
 
     public void setDataMD5(String md5) {

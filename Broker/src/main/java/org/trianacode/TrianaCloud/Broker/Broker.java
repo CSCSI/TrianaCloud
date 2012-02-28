@@ -123,6 +123,7 @@ public class Broker extends TrianaCloudServlet {
             byte[] data = null;
             String r_key = "";
             String fname = "";
+            String name = "";
             int numTasks = 0;
             StringBuilder s = new StringBuilder();
 
@@ -141,6 +142,9 @@ public class Broker extends TrianaCloudServlet {
                         }
                         if (fieldname.equalsIgnoreCase("numtasks")) {
                             numTasks = Integer.parseInt(fieldvalue);
+                        }
+                        if (fieldname.equalsIgnoreCase("name")) {
+                            name = fieldvalue;
                         }
                     } else {
                         // Process form file field (input type="file").
@@ -185,7 +189,8 @@ public class Broker extends TrianaCloudServlet {
             for (int i = 0; i < numTasks; i++) {
                 Task t = new Task();
                 t.setData(data);
-                t.setName(fname);
+                t.setName(name);
+                t.setFileName(fname);
                 t.setOrigin("Broker");
                 t.setDispatchTime(System.currentTimeMillis());
                 t.setRoutingKey(r_key);
