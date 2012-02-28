@@ -126,7 +126,7 @@ public class Worker {
                     //String message = new String(delivery.getBody());
                     byte[] message = delivery.getBody();
                     //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
-                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TaskExecutionExample.TaskExecutionExample");
+                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.CommandLineExecutor.Executor");
 
                     Task t = TaskOps.decodeTask(message);
                     ex.setTask(t);

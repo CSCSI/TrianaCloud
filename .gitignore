@@ -1,10 +1,12 @@
 
 *.idea
 *.iml
-/TaskExecutionExample/target
-/Ventilator/target
-/Worker/target
-/Broker/target
+/TaskExecutionExample/target/
+/Ventilator/target/
+/Worker/target/
+/Broker/target/
+/Utils/target/
+/CommandLineExecutor/target/
 /TrianaTaskExecutor/target/maven-archiver/pom.properties
 /TrianaTaskExecutor/target/org.trianacode.properties
 /TrianaTaskExecutor/target/surefire-reports/TEST-org.trianacode.TrianaCloud.AppTest.xml
@@ -13,4 +15,3 @@
 /Utils/target/surefire-reports/TEST-org.trianacode.TrianaCloud.AppTest.xml
 /Utils/target/surefire-reports/org.trianacode.TrianaCloud.AppTest.txt
 /TrianaTaskExecutor/target/classes/META-INF/config
-/Utils/target/
