@@ -32,53 +32,53 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Task {
     ///TODO: Task metadata class.
-    public String origin;
-    public String name;
-    public byte[] data;
-    public long dispatchTime;
-    public String routingKey;
+    private String _origin;
+    private String _name;
+    private byte[] _data;
+    private long _dispatchTime;
+    private String _routingKey;
 
     public String getOrigin() {
-        return origin;
+        return _origin;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public long getDispatchTime() {
-        return dispatchTime;
+        return _dispatchTime;
     }
 
     public String getRoutingKey() {
-        return routingKey;
+        return _routingKey;
     }
 
     public void setOrigin(String origin) {
-        this.origin = origin;
+        this._origin = origin;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this._name = name;
     }
 
     public void setDispatchTime(long dispatchTime) {
-        this.dispatchTime = dispatchTime;
+        this._dispatchTime = dispatchTime;
     }
 
     public void setRoutingKey(String routingKey) {
-        this.routingKey = routingKey;
+        this._routingKey = routingKey;
     }
 
     public Date getTotalTime() {
-        return new Date(System.currentTimeMillis() - dispatchTime);
+        return new Date(System.currentTimeMillis() - _dispatchTime);
     }
 
     public byte[] getData() {
-        return data;
+        return _data;
     }
 
     public void setData(byte[] data) {
-        this.data = data;
+        this._data = data;
     }
 }
