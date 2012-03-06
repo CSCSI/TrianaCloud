@@ -46,16 +46,16 @@
     </repositories>
 
     <build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.2.1</version>
@@ -78,6 +78,9 @@
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/../depsdir</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -97,16 +100,16 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.trianacode.shiwa.bundle</groupId>
-            <artifactId>TrianaBundle</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>C:\\Users\keyz\\Desktop\\Triana\\triana-shiwa-4.0.1-SNAPSHOT-jar-with-dependencies.jar
-            </systemPath>
+            <!--<groupId>org.trianacode.shiwa.bundle</groupId>-->
+            <!--<artifactId>TrianaBundle</artifactId>-->
+            <!--<version>1.0</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>C:\\Users\keyz\\Desktop\\Triana\\triana-shiwa-4.0.1-SNAPSHOT-jar-with-dependencies.jar-->
+            <!--</systemPath>-->
 
-            <!--<groupId>org.trianacode</groupId>-->
-            <!--<artifactId>triana-shiwa</artifactId>-->
-            <!--<version>4.0.1-SNAPSHOT</version>-->
+            <groupId>org.trianacode</groupId>
+            <artifactId>triana-shiwa</artifactId>
+            <version>4.0.1-SNAPSHOT</version>
         </dependency>
         <!--<dependency>
             <groupId>org.shiwa.desktop</groupId>

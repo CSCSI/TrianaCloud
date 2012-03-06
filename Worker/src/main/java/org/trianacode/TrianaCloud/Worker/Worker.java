@@ -101,7 +101,7 @@ public class Worker {
             URL[] urls = new URL[1];
             ///TODO:Grab a plugin dir from the config file
             String workingDir = System.getProperty("user.dir");
-            File f = new File(workingDir);
+            File f = new File(workingDir + File.separator + "depsdir");
             System.out.println("Addon path : " + f.getAbsolutePath());
             urls[0] = f.toURI().toURL();
             //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
@@ -147,6 +147,7 @@ public class Worker {
                     //Acknowledge that the task has been received. If a crash happens before here, then Rabbit automagically
                     //sticks the message back in the queue.
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                    System.out.println("got this far?");
                 }
             }
         } catch (Exception e) {
@@ -155,7 +156,8 @@ public class Worker {
             if (connection != null) {
                 try {
                     connection.close();
-                } catch (Exception ignore) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
