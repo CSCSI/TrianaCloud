@@ -25,8 +25,13 @@ import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskExecutionException;
 import org.trianacode.TrianaCloud.Utils.TaskExecutor;
 
+import org.apache.log4j.Logger;
+
 
 public class TaskExecutionExample extends TaskExecutor {
+
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
     private Task task;
     private String data;
 

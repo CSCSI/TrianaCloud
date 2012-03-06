@@ -25,6 +25,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.MD5;
 import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
@@ -36,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * The Receiver is a background thread responsible for connecting results back to the task.
  */
 public class Receiver implements Runnable {
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
     ///TODO: is taskmap necessary?
     private String receiveQueueName;
     private ConcurrentHashMap<String, Task> taskMap;

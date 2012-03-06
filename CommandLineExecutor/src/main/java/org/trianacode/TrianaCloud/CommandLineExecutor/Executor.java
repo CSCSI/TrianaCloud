@@ -1,5 +1,6 @@
 package org.trianacode.TrianaCloud.CommandLineExecutor;
 
+import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.*;
 
 import java.io.*;
@@ -8,6 +9,9 @@ import java.io.*;
  * Hello world!
  */
 public class Executor extends TaskExecutor {
+
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
     private Task task;
     File temp;
 

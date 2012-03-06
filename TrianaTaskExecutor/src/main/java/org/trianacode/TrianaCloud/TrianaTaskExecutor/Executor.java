@@ -33,6 +33,7 @@ import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskExecutor;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
 import org.trianacode.shiwa.bundle.TrianaBundle;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,6 +44,9 @@ import java.util.ArrayList;
  * Hello world!
  */
 public class Executor extends TaskExecutor implements Runnable{
+
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
     Task task;
     File temp;
     private byte[] out = new byte[0];
@@ -53,7 +57,6 @@ public class Executor extends TaskExecutor implements Runnable{
         ///TODO: get the returned file, read it into task.setReturnData(), setReturnType to binary
         ///TODO return the task as below
 
-//        byte[] out = new byte[0];
         try {
             Thread thread = new Thread(this);
             thread.run();

@@ -22,6 +22,7 @@
 package org.trianacode.TrianaCloud.Broker;
 
 import com.rabbitmq.client.ConnectionFactory;
+import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.Task;
 
 import javax.servlet.ServletContext;
@@ -37,6 +38,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * To change this template use File | Settings | File Templates.
  */
 public class BrokerServletContextListener implements ServletContextListener {
+
+    private Logger logger = Logger.getLogger(this.getClass().toString());
 
     private static Receiver receiver;
     private static ConcurrentHashMap<String, Task> taskMap;
