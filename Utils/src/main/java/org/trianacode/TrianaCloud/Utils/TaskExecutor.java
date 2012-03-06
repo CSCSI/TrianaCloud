@@ -21,7 +21,16 @@
 
 package org.trianacode.TrianaCloud.Utils;
 
+import org.apache.log4j.Logger;
+
 public abstract class TaskExecutor {
+
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
+    private Logger getLogger(){
+        return logger;
+    }
+
     abstract public byte[] executeTask() throws TaskExecutionException;
 
     abstract public void setTask(Task task);

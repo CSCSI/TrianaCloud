@@ -22,27 +22,35 @@
 package org.trianacode.TrianaCloud.Utils;
 
 import de.undercouch.bson4jackson.BsonFactory;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class TaskOps {
+
+    private static Logger logger = Logger.getLogger("org.trianacode.TrianaCloud.Utils.TaskOps");
+
     public static Task decodeTask(byte[] data) throws IOException {
+        logger.trace("Decoding tast");
         ObjectMapper mapper = new ObjectMapper(new BsonFactory());
         Task t = mapper.readValue(data, 0, data.length, Task.class);
         if (t == null) {
+            logger.debug("Decoded Task is null");
             throw new IOException("Decoded Task is null!");
         }
         return t;
     }
 
     public static byte[] encodeTask(Task t) throws IOException {
+        logger.trace("Encoding tast");
         ObjectMapper mapper = new ObjectMapper(new BsonFactory());
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         mapper.writeValue(o, t);
         byte[] b = o.toByteArray();
         if (b == null) {
+            logger.debug("Encoded Task is null");
             throw new IOException("Encoded Task is null!");
         }
         return b;

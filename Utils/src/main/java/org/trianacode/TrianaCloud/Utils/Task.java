@@ -27,11 +27,11 @@ import java.util.Date;
 
 /**
  * Task encapsulates a task (or job), and any relevant information (e.g. where to send results).
- * TODO: A toWire method that converts the necessary data to some wire format (e.g. ASN.1). Keep it simple.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Task {
     ///TODO: Task metadata class.
+    ///TODO: add an Options propery. Can be used for anything, e.g. command line args, env properties whatever.
     private String _origin;
     private String _name;
     private byte[] _data;

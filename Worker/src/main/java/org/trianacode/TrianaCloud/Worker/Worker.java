@@ -26,6 +26,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskExecutor;
 import org.trianacode.TrianaCloud.Utils.TaskExecutorLoader;
@@ -39,6 +40,9 @@ import java.net.URL;
  */
 
 public class Worker {
+
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
     private static boolean continueLoop = true;
 
     public static void main(String[] argv) {

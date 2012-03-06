@@ -30,6 +30,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
 import org.trianacode.TrianaCloud.Utils.TrianaCloudServlet;
@@ -52,6 +53,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Broker extends TrianaCloudServlet {
 
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
     public static final String RABBIT_QUEUE = "rabbitmq.queue";
     public static final String EXCHANGE = "rabbitmq.exchange";
     public static ConcurrentHashMap<String, Task> taskMap;
@@ -68,29 +71,33 @@ public class Broker extends TrianaCloudServlet {
         try {
             factory = (ConnectionFactory) getServletContext().getAttribute("RabbitMQConnectionFactory");
             if (factory == null) {
+                logger.fatal("No RabbitMQ factory retrieved from Servlet Context. Cannot go on.");
                 throw new ServletException("No RabbitMQ factory retrieved from Servlet Context. Cannot go on.");
             }
             r_exchange = getInitParameter(EXCHANGE);
             if (r_exchange == null) {
+                logger.fatal("No RabbitMQ exchange defined in init parameter. Cannot go on.");
                 throw new ServletException("No RabbitMQ exchange defined in init parameter. Cannot go on.");
             }
             r_replyQueue = (String) getServletContext().getAttribute("replyQueue");
             if (r_replyQueue == null) {
-                throw new ServletException("No RabbitMQ reply queue defined in init parameter. Cannot 	go on.");
+                logger.fatal("No RabbitMQ reply queue defined in init parameter. Cannot go on.");
+                throw new ServletException("No RabbitMQ reply queue defined in init parameter. Cannot go on.");
             }
 
             taskMap = (ConcurrentHashMap<String, Task>) getServletContext().getAttribute("taskmap");
             if (taskMap == null) {
+                logger.fatal("Couldn't get Taskmap");
                 throw new ServletException("Couldn't get Taskmap");
             }
 
             connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(r_exchange, "topic");
-        } catch (NumberFormatException e) {
-            throw new ServletException("No RabbitMQ password defined in init parameter. Cannot go on.");
         } catch (Exception e) {
-            throw new ServletException(e);
+            ServletException se = new ServletException(e);
+            logger.fatal("Something Happened!",se);
+            throw se;
         }
     }
 

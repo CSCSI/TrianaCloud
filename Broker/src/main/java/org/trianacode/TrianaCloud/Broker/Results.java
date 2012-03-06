@@ -1,8 +1,6 @@
 package org.trianacode.TrianaCloud.Broker;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.trianacode.TrianaCloud.Utils.Task;
@@ -19,22 +17,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created by IntelliJ IDEA.
- * User: keyz
- * Date: 28/02/12
- * Time: 15:50
- * To change this template use File | Settings | File Templates.
- */
 public class Results extends TrianaCloudServlet {
+
+    private Logger logger = Logger.getLogger(this.getClass());
+
     public static ConcurrentHashMap<String, Task> resultMap;
-
-    private String r_replyQueue;
-    private String r_exchange;
-
-    private Connection connection;
-    private Channel channel;
-    private ConnectionFactory factory;
 
     private class TaskReturn {
         public String name;
@@ -49,12 +36,14 @@ public class Results extends TrianaCloudServlet {
         try {
             resultMap = (ConcurrentHashMap<String, Task>) getServletContext().getAttribute("resultMap");
             if (resultMap == null) {
-                throw new ServletException("Couldn't get resultMap");
+                ServletException se = new ServletException("Couldn't get resultMap");
+                logger.error("Couldn't get the ResultMap",se);
+                throw se;
             }
-        } catch (NumberFormatException e) {
-            throw new ServletException("No RabbitMQ password defined in init parameter. Cannot go on.");
         } catch (Exception e) {
-            throw new ServletException(e);
+            ServletException se = new ServletException("Couldn't get resultMap");
+            logger.error("Something Happened!",se);
+            throw se;
         }
     }
 
@@ -64,9 +53,13 @@ public class Results extends TrianaCloudServlet {
         if (value == null) {
             // The request parameter 'param' was not present in the query string
             // e.g. http://hostname.com?a=b
+            logger.error("Parameter \"action\" not defined in the request.");
+            this.write404Error(response,"Parameter \"action\" not defined in the request.");
         } else if ("".equals(value)) {
             // The request parameter 'param' was present in the query string but has no value
             // e.g. http://hostname.com?param=&a=b
+            logger.error("Parameter \"action\" is null");
+            this.write404Error(response,"Parameter \"action\" is null.");
         }
 
         String pathInfo = isolatePath(request);
@@ -182,7 +175,7 @@ public class Results extends TrianaCloudServlet {
                     b.append("<div class=\"Title\">");
                     b.append(t.getOrigin());
                     b.append(" ");
-                    b.append(t.getTotalTime() + " ms");
+                    b.append(t.getTotalTime().getTime() + " ms");
                     b.append("</div>");
                     if (t.getReturnDataType().equalsIgnoreCase("string")) {
                         b.append("<div class=\"toggle\"><pre>");

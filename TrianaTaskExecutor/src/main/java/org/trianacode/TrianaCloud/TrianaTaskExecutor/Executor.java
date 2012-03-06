@@ -21,6 +21,7 @@
 
 package org.trianacode.TrianaCloud.TrianaTaskExecutor;
 
+import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.*;
 
 import java.io.File;
@@ -31,6 +32,9 @@ import java.io.IOException;
  * Hello world!
  */
 public class Executor extends TaskExecutor {
+
+    private Logger logger = Logger.getLogger(this.getClass().toString());
+
     Task task;
     File temp;
 
@@ -42,7 +46,7 @@ public class Executor extends TaskExecutor {
         /*
         try {
             SHIWABundle b = new SHIWABundle(temp);
-            TrianaBundle tb = new TrianaBundle();
+            Tria    naBundle tb = new TrianaBundle();
             SHIWABundle out = tb.executeBundle(b, null);
             File outfile = new File(out.getAggregatedResource().getFilename());
             FileInputStream fis = new FileInputStream(outfile);
