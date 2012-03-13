@@ -104,8 +104,15 @@ public class Worker {
             ///TODO:Make sure there's not a better way to do this
             URL[] urls = new URL[1];
             ///TODO:Grab a plugin dir from the config file
-            String workingDir = System.getProperty("user.dir");
-            File f = new File(workingDir + File.separator + "depsdir");
+            String workingDir;
+            File f;
+            if(argv.length > 0){
+                workingDir = argv[0];
+                f = new File(workingDir);
+            } else {
+                workingDir = System.getProperty("user.dir");
+                f = new File(workingDir + File.separator + "depsdir");
+            }
             System.out.println("Addon path : " + f.getAbsolutePath());
             urls[0] = f.toURI().toURL();
             //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
@@ -124,13 +131,14 @@ public class Worker {
                         .correlationId(props.getCorrelationId())
                         .build();
 
+                TaskExecutor ex;
                 try {
                     ///TODO: Use metadata to figure out which Executor to use.
                     ///TODO: Figure out what wire-protocol to use. Something simple like ASN.1? Or a subset of it?
 
                     //String message = new String(delivery.getBody());
                     byte[] message = delivery.getBody();
-                    TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
+                    ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
                     //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.CommandLineExecutor.Executor");
 
                     Task t = TaskOps.decodeTask(message);
@@ -151,7 +159,9 @@ public class Worker {
                     //Acknowledge that the task has been received. If a crash happens before here, then Rabbit automagically
                     //sticks the message back in the queue.
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-                    System.out.println("got this far?");
+
+                    //TODO bye bye!!
+//                    System.exit(0);
                 }
             }
         } catch (Exception e) {
