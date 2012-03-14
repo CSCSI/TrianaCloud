@@ -98,6 +98,11 @@ public class Executor extends TaskExecutor implements Runnable{
     }
 
     @Override
+    public String getRoutingKey() {
+        return "*.triana";
+    }
+
+    @Override
     public void run() {
         SHIWABundle b = null;
         try {

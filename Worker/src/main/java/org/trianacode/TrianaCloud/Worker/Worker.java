@@ -33,6 +33,7 @@ import org.trianacode.TrianaCloud.Utils.TaskExecutorLoader;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /*
@@ -44,11 +45,15 @@ public class Worker {
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
     private static boolean continueLoop = true;
+    private static TaskExecutorLoader tel;
 
     public static void main(String[] argv) {
+
         Connection connection = null;
         Channel channel;
         try {
+            loadPlugins(argv);
+
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost("s-vmc.cs.cf.ac.uk");
             factory.setPort(7000);
@@ -83,40 +88,22 @@ public class Worker {
             */
 
             //String routingKey = "*.kieran";
-            String routingKey = "*.triana";
-
-            System.out.println(" [x] Routing Key: " + routingKey);
-
-            ///TODO:Grab from argv or config file
-            String queueName = channel.queueDeclare(routingKey, true, false, true, null).getQueue();
-            channel.queueBind(queueName, "tc_exchange", routingKey);
-
-            //Makes sure tasks are shared properly, this tells rabbit to only grab one message at a time.
-            channel.basicQos(1);
+//            String routingKey = "*.triana";
 
             QueueingConsumer consumer = new QueueingConsumer(channel);
-            channel.basicConsume(queueName, false, consumer);
 
-            System.out.println(" [x] Loading Plugins");
+            for(String routingKey : tel.routingKeys){
+                System.out.println(" [x] Routing Key: " + routingKey);
 
-            ClassLoader classLoader = Worker.class.getClassLoader();
+                ///TODO:Grab from argv or config file
+                String queueName = channel.queueDeclare(routingKey, true, false, true, null).getQueue();
+                channel.queueBind(queueName, "tc_exchange", routingKey);
 
-            ///TODO:Make sure there's not a better way to do this
-            URL[] urls = new URL[1];
-            ///TODO:Grab a plugin dir from the config file
-            String workingDir;
-            File f;
-            if(argv.length > 0){
-                workingDir = argv[0];
-                f = new File(workingDir);
-            } else {
-                workingDir = System.getProperty("user.dir");
-                f = new File(workingDir + File.separator + "depsdir");
+                //Makes sure tasks are shared properly, this tells rabbit to only grab one message at a time.
+                channel.basicQos(1);
+                channel.basicConsume(queueName, false, consumer);
             }
-            System.out.println("Addon path : " + f.getAbsolutePath());
-            urls[0] = f.toURI().toURL();
-            //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
-            TaskExecutorLoader tel = new TaskExecutorLoader(urls, classLoader);
+
 
             System.out.println(" [x] Awaiting RPC requests");
 
@@ -175,5 +162,28 @@ public class Worker {
                 }
             }
         }
+    }
+
+    private static void loadPlugins(String[] argv) throws MalformedURLException {
+        System.out.println(" [x] Loading Plugins");
+
+        ClassLoader classLoader = Worker.class.getClassLoader();
+
+        ///TODO:Make sure there's not a better way to do this
+        URL[] urls = new URL[1];
+        ///TODO:Grab a plugin dir from the config file
+        String workingDir;
+        File f;
+        if(argv.length > 0){
+            workingDir = argv[0];
+            f = new File(workingDir);
+        } else {
+            workingDir = System.getProperty("user.dir");
+            f = new File(workingDir + File.separator + "depsdir");
+        }
+        System.out.println("Addon path : " + f.getAbsolutePath());
+        urls[0] = f.toURI().toURL();
+        //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
+        tel = new TaskExecutorLoader(urls, classLoader);
     }
 }

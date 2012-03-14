@@ -68,7 +68,12 @@ public class Executor extends TaskExecutor {
 
             System.out.println(task.getName());
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public String getRoutingKey() {
+        return "*.cmd";
     }
 }

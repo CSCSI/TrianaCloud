@@ -31,6 +31,7 @@
         <module>Utils</module>
         <module>TrianaTaskExecutor</module>
         <module>CommandLineExecutor</module>
+        <module>pegasusExecutor</module>
     </modules>
     <groupId>org.trianacode.TrianaCloud</groupId>
     <version>1.0</version>

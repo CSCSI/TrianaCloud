@@ -87,6 +87,11 @@ public class PegasusExecutor extends TaskExecutor implements Runnable{
     }
 
     @Override
+    public String getRoutingKey() {
+        return "*.pegasus";
+    }
+
+    @Override
     public void run() {
         SHIWABundle b = null;
         try {

@@ -34,4 +34,6 @@ public abstract class TaskExecutor {
     abstract public byte[] executeTask() throws TaskExecutionException;
 
     abstract public void setTask(Task task);
+
+    abstract public String getRoutingKey();
 }

@@ -40,8 +40,9 @@ public class TaskExecutorLoader extends URLClassLoader {
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
     File[] jars;
-    HashMap<String, Class> addons = new HashMap<String, Class>();
-    //ArrayList<Class> services = new ArrayList<Class>();
+    public HashMap<String, Class> addons = new HashMap<String, Class>();
+
+    public ArrayList<String> routingKeys = new ArrayList<String>();
 
     public TaskExecutorLoader(URL[] urls, ClassLoader classLoader) {
         super(urls, classLoader);
@@ -102,6 +103,8 @@ public class TaskExecutorLoader extends URLClassLoader {
                                     Class cls = this.loadClass(line);
                                     if (TaskExecutor.class.isAssignableFrom(cls)) {
                                         addons.put(line, cls);
+                                        TaskExecutor executor = (TaskExecutor) cls.newInstance();
+                                        routingKeys.add(executor.getRoutingKey());
                                     }
                                     done.add(line);
                                 }

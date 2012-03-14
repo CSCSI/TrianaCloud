@@ -56,4 +56,9 @@ public class TaskExecutionExample extends TaskExecutor {
         this.task = t;
         this.data = t.getName();
     }
+
+    @Override
+    public String getRoutingKey() {
+        return "*.test";
+    }
 }
