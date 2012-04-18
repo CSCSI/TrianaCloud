@@ -99,22 +99,22 @@
             <artifactId>Utils</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <!--<groupId>org.trianacode.shiwa.bundle</groupId>-->
-            <!--<artifactId>TrianaBundle</artifactId>-->
-            <!--<version>1.0</version>-->
-            <!--<scope>system</scope>-->
-            <!--<systemPath>C:\\Users\keyz\\Desktop\\Triana\\triana-shiwa-4.0.1-SNAPSHOT-jar-with-dependencies.jar-->
-            <!--</systemPath>-->
+        <!--<dependency>-->
+            <!--&lt;!&ndash;<groupId>org.trianacode.shiwa.bundle</groupId>&ndash;&gt;-->
+            <!--&lt;!&ndash;<artifactId>TrianaBundle</artifactId>&ndash;&gt;-->
+            <!--&lt;!&ndash;<version>1.0</version>&ndash;&gt;-->
+            <!--&lt;!&ndash;<scope>system</scope>&ndash;&gt;-->
+            <!--&lt;!&ndash;<systemPath>C:\\Users\keyz\\Desktop\\Triana\\triana-shiwa-4.0.1-SNAPSHOT-jar-with-dependencies.jar&ndash;&gt;-->
+            <!--&lt;!&ndash;</systemPath>&ndash;&gt;-->
 
-            <groupId>org.trianacode</groupId>
-            <artifactId>triana-shiwa</artifactId>
-            <version>4.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.shiwa.desktop</groupId>
-            <artifactId>shiwa-desktop-gui</artifactId>
-            <version>1.5.1-SNAPSHOT</version>
-        </dependency>
+            <!--<groupId>org.trianacode</groupId>-->
+            <!--<artifactId>triana-shiwa</artifactId>-->
+            <!--<version>4.0.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.shiwa.desktop</groupId>-->
+            <!--<artifactId>shiwa-desktop-gui</artifactId>-->
+            <!--<version>1.5.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
     </dependencies>
 </project>

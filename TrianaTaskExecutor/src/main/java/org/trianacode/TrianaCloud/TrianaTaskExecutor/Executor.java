@@ -22,28 +22,17 @@
 package org.trianacode.TrianaCloud.TrianaTaskExecutor;
 
 import org.apache.log4j.Logger;
-import org.shiwa.desktop.data.description.SHIWABundle;
-import org.shiwa.desktop.data.description.core.Configuration;
-import org.shiwa.desktop.data.description.resource.ConfigurationResource;
-import org.shiwa.desktop.data.description.resource.ReferableResource;
-import org.shiwa.desktop.data.description.workflow.OutputPort;
-import org.shiwa.desktop.data.transfer.WorkflowController;
-import org.shiwa.desktop.data.util.exception.SHIWADesktopIOException;
-import org.trianacode.TrianaCloud.Utils.MD5;
-import org.trianacode.TrianaCloud.Utils.Task;
-import org.trianacode.TrianaCloud.Utils.TaskExecutor;
-import org.trianacode.TrianaCloud.Utils.TaskOps;
-import org.trianacode.shiwa.bundle.TrianaBundle;
+import org.trianacode.TrianaCloud.Utils.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Hello world!
  */
-public class Executor extends TaskExecutor implements Runnable{
+public class Executor extends TaskExecutor{
 
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
@@ -57,27 +46,44 @@ public class Executor extends TaskExecutor implements Runnable{
         ///TODO: get the returned file, read it into task.setReturnData(), setReturnType to binary
         ///TODO return the task as below
 
-        try {
-
-//            ThreadGroup threadGroup = new ThreadGroup("Executor");
-//            Thread thread = new Thread(threadGroup, this);
-            Thread thread = new Thread(this);
-            thread.run();
-            thread.join();
-
-//            threadGroup.destroy();
-        }catch (Exception e) {
-            System.out.println("Error in executor");
-            e.printStackTrace();
-        }
+        System.out.println("Runtime folder : " + System.getProperty("user.dir"));
 
         try {
+            File tempReturnFile = File.createTempFile("outputBundle", ".zip");
+
+            String executableString = "./triana.sh -n -p unbundle "
+                    + temp.getAbsolutePath() + " "
+                    + tempReturnFile.getAbsolutePath();
+
+            System.out.println("Will run : " + executableString);
+
+//            executableString = "ls";
+
+            List<String> options = new ArrayList<String>();
+            String[] optionsStrings = executableString.split(" ");
+            Collections.addAll(options, optionsStrings);
+
+            ProcessBuilder processBuilder = new ProcessBuilder(optionsStrings);
+//            processBuilder.directory(new File("triana"));
+            Process p = processBuilder.start();
+
+            new StreamToOutput(p.getInputStream(), "std.out").start();
+            new StreamToOutput(p.getErrorStream(), "std.err").start();
+
+            p.waitFor();
+
+            if(tempReturnFile.exists()){
+                System.out.println("Triana produced bundle at : "
+                        + tempReturnFile.getAbsolutePath());
+                out = getBytesFromFile(tempReturnFile);
+            }
+
             task.setReturnDataType("binary");
             task.setReturnData(out);
             task.setReturnDataMD5(MD5.getMD5Hash(task.getReturnData()));
-            task.setReturnCode("1");
+            task.setReturnCode("0");
             return TaskOps.encodeTask(task);  //To change body of implemented methods use File | Settings | File Templates.
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return new byte[0];
         }
@@ -107,89 +113,35 @@ public class Executor extends TaskExecutor implements Runnable{
         return "*.triana";
     }
 
-    @Override
-    public void run() {
+    public static byte[] getBytesFromFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
 
-//        URL[] urls = new URL[0];
-//        String jarPath = Executor.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-//        try {
-//            String decodedPath = URLDecoder.decode(jarPath, "UTF-8");
-//            System.out.println("This class = " + decodedPath);
-//            File file = new File(decodedPath);
-//            if(decodedPath.endsWith(".jar") && file.exists()){
-//                urls = new URL[]{file.toURI().toURL()};
-//            }
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        ClassLoader classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader().getParent());
-//        Thread.currentThread().setContextClassLoader(classLoader);
+        long length = file.length();
 
-        try {
 
-//            Class mainClass = classLoader.loadClass("org.trianacode.shiwa.bundle.TrianaBundle");
-//            for(Method method : mainClass.getDeclaredMethods()){
-//                if(method.getName().contains("executeBundle")){
-////                    Method method = mainClass.getDeclaredMethod("executeBundle", new Class[]{SHIWABundle.class, String.class});
-//                    SHIWABundle b = new SHIWABundle(temp);
-//                    out = (byte[]) method.invoke(b, null);
-//
-//                }
-//            }
-
-            TrianaBundle tb = new TrianaBundle();
-            SHIWABundle b = new SHIWABundle(temp);
-            out = tb.executeBundle(b, null);
-
-//            SHIWABundle execedBundle = testExecution(b);
-//            out = TrianaBundle.getFileBytes(
-//                    DataUtils.bundle(File.createTempFile("execed", ".tmp"),
-//                            execedBundle.getAggregatedResource()));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
+        if (length > Integer.MAX_VALUE) {
+            return new byte[0];
         }
+
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int)length];
+
+        // Read in the bytes
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length
+                && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+            offset += numRead;
+        }
+
+        // Ensure all the bytes have been read in
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file "+file.getName());
+        }
+
+        // Close the input stream and return bytes
+        is.close();
+        return bytes;
     }
 
-    private SHIWABundle testExecution(SHIWABundle shiwaBundle) {
-        try {
-            WorkflowController workflowController = new WorkflowController(shiwaBundle);
-            Configuration execConfig = new Configuration(Configuration.ConfigType.EXECUTION_CONFIGURATION);
-
-            ArrayList<ConfigurationResource> configurationResourceArrayList = new ArrayList<ConfigurationResource>();
-            for(ReferableResource resource : workflowController.getWorkflowImplementation().getSignature().getPorts()){
-                if(resource instanceof OutputPort){
-                    OutputPort outputPort = (OutputPort) resource;
-                    //TODO check name
-                    ConfigurationResource configurationResource = new ConfigurationResource(outputPort);
-//                    File outputFile = new File("output2.txt");
-//                    System.out.println(outputFile.getAbsolutePath());
-//                    BundleFile bf = DataUtils.createBundleFile(outputFile, execConfig.getId() + "/");
-//                    bf.setType(BundleFile.FileType.INPUT_FILE);
-//                    execConfig.getBundleFiles().add(bf);
-//                    configurationResource.setBundleFile(bf);
-//                    configurationResource.setRefType(ConfigurationResource.RefTypes.FILE_REF);
-//                    execConfig.addResourceRef(configurationResource);
-                    configurationResource.setValue("Some text " + outputPort.getTitle());
-                    configurationResource.setRefType(ConfigurationResource.RefTypes.INLINE_REF);
-                    configurationResourceArrayList.add(configurationResource);
-                }
-            }
-            execConfig.setResources(configurationResourceArrayList);
-            workflowController.getWorkflowImplementation().getAggregatedResources().add(execConfig);
-
-            System.out.println(execConfig + " will have " + execConfig.getResources().size() + " resources.");
-
-
-
-        } catch (SHIWADesktopIOException e) {
-            e.printStackTrace();
-        }
-        return shiwaBundle;
-    }
 }
