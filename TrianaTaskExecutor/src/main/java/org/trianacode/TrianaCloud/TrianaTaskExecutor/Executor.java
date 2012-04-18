@@ -21,6 +21,7 @@
 
 package org.trianacode.TrianaCloud.TrianaTaskExecutor;
 
+import org.apache.log4j.Logger;
 import org.shiwa.desktop.data.description.SHIWABundle;
 import org.shiwa.desktop.data.description.core.Configuration;
 import org.shiwa.desktop.data.description.resource.ConfigurationResource;
@@ -33,7 +34,6 @@ import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskExecutor;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
 import org.trianacode.shiwa.bundle.TrianaBundle;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,10 +58,14 @@ public class Executor extends TaskExecutor implements Runnable{
         ///TODO return the task as below
 
         try {
+
+//            ThreadGroup threadGroup = new ThreadGroup("Executor");
+//            Thread thread = new Thread(threadGroup, this);
             Thread thread = new Thread(this);
             thread.run();
             thread.join();
 
+//            threadGroup.destroy();
         }catch (Exception e) {
             System.out.println("Error in executor");
             e.printStackTrace();
@@ -71,6 +75,7 @@ public class Executor extends TaskExecutor implements Runnable{
             task.setReturnDataType("binary");
             task.setReturnData(out);
             task.setReturnDataMD5(MD5.getMD5Hash(task.getReturnData()));
+            task.setReturnCode("1");
             return TaskOps.encodeTask(task);  //To change body of implemented methods use File | Settings | File Templates.
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -104,17 +109,50 @@ public class Executor extends TaskExecutor implements Runnable{
 
     @Override
     public void run() {
-        SHIWABundle b = null;
+
+//        URL[] urls = new URL[0];
+//        String jarPath = Executor.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+//        try {
+//            String decodedPath = URLDecoder.decode(jarPath, "UTF-8");
+//            System.out.println("This class = " + decodedPath);
+//            File file = new File(decodedPath);
+//            if(decodedPath.endsWith(".jar") && file.exists()){
+//                urls = new URL[]{file.toURI().toURL()};
+//            }
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        ClassLoader classLoader = new URLClassLoader(urls, ClassLoader.getSystemClassLoader().getParent());
+//        Thread.currentThread().setContextClassLoader(classLoader);
+
         try {
-            b = new SHIWABundle(temp);
+
+//            Class mainClass = classLoader.loadClass("org.trianacode.shiwa.bundle.TrianaBundle");
+//            for(Method method : mainClass.getDeclaredMethods()){
+//                if(method.getName().contains("executeBundle")){
+////                    Method method = mainClass.getDeclaredMethod("executeBundle", new Class[]{SHIWABundle.class, String.class});
+//                    SHIWABundle b = new SHIWABundle(temp);
+//                    out = (byte[]) method.invoke(b, null);
+//
+//                }
+//            }
+
             TrianaBundle tb = new TrianaBundle();
+            SHIWABundle b = new SHIWABundle(temp);
             out = tb.executeBundle(b, null);
+
 //            SHIWABundle execedBundle = testExecution(b);
 //            out = TrianaBundle.getFileBytes(
 //                    DataUtils.bundle(File.createTempFile("execed", ".tmp"),
 //                            execedBundle.getAggregatedResource()));
+
         } catch (Exception e) {
             e.printStackTrace();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
     }
 

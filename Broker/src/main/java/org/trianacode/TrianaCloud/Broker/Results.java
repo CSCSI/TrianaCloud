@@ -30,6 +30,7 @@ public class Results extends TrianaCloudServlet {
         public String dataType;
         public String data;
         public String key;
+        public String returnCode;
     }
 
     public void init() throws ServletException {
@@ -116,6 +117,7 @@ public class Results extends TrianaCloudServlet {
                 r.origin = t.getOrigin();
                 r.dataType = t.getReturnDataType();
                 r.totalTime = (t.getTotalTime().getTime() + "ms");
+                r.returnCode = t.getReturnCode();
                 if (r.dataType.equalsIgnoreCase("string")) {
                     r.data = new String(t.getReturnData(), "UTF-8");
                 }

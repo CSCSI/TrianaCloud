@@ -43,6 +43,7 @@ public class Task {
     private String _returnDataType;
     private String _dataMD5;
     private String _returnDataMD5;
+    private String _returnCode;
 
     public String getDataMD5() {
         return _dataMD5;
@@ -134,5 +135,13 @@ public class Task {
 
     public void setData(byte[] data) {
         this._data = data;
+    }
+
+    public String getReturnCode(){
+        return _returnCode;
+    }
+
+    public void setReturnCode(String returnCode) {
+        this._returnCode = returnCode;
     }
 }
