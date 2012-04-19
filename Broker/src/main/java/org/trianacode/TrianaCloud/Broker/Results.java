@@ -38,12 +38,12 @@ public class Results extends TrianaCloudServlet {
             resultMap = (ConcurrentHashMap<String, Task>) getServletContext().getAttribute("resultMap");
             if (resultMap == null) {
                 ServletException se = new ServletException("Couldn't get resultMap");
-                logger.error("Couldn't get the ResultMap",se);
+                logger.error("Couldn't get the ResultMap", se);
                 throw se;
             }
         } catch (Exception e) {
             ServletException se = new ServletException("Couldn't get resultMap");
-            logger.error("Something Happened!",se);
+            logger.error("Something Happened!", se);
             throw se;
         }
     }
@@ -55,18 +55,18 @@ public class Results extends TrianaCloudServlet {
             // The request parameter 'param' was not present in the query string
             // e.g. http://hostname.com?a=b
             logger.error("Parameter \"action\" not defined in the request.");
-            this.write404Error(response,"Parameter \"action\" not defined in the request.");
+            this.write404Error(response, "Parameter \"action\" not defined in the request.");
         } else if ("".equals(value)) {
             // The request parameter 'param' was present in the query string but has no value
             // e.g. http://hostname.com?param=&a=b
             logger.error("Parameter \"action\" is null");
-            this.write404Error(response,"Parameter \"action\" is null.");
+            this.write404Error(response, "Parameter \"action\" is null.");
         }
 
         String pathInfo = isolatePath(request);
         String content = "";
         if (!pathInfo.equalsIgnoreCase("")) {
-            write404Error(response, "Unknonw endpoint");
+            write404Error(response, "Unknown endpoint");
             return;
         }
 
@@ -76,7 +76,65 @@ public class Results extends TrianaCloudServlet {
             getFile(request, response);
         } else if (value.equalsIgnoreCase("results")) {
             getResults(request, response);
+        } else if (value.equalsIgnoreCase("byid")) {
+            getJsonByID(request, response);
         }
+    }
+
+    public void getJsonByID(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        String pname = "uuid";
+        String kvalue = request.getParameter(pname);
+
+        if (kvalue == null) {
+            System.out.println("UUID is null");
+        }
+        if (kvalue.equalsIgnoreCase("")) {
+            System.out.println("UUID is blank");
+        }
+        try {
+            response.setStatus(200);
+            response.setContentType("text/html");
+
+            response.getWriter().println(makeJSONByID(kvalue));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e);
+            StringBuffer stack = new StringBuffer("Error: " + e.getMessage() + "<br/>");
+            StackTraceElement[] trace = e.getStackTrace();
+            for (StackTraceElement element : trace) {
+                stack.append(element.toString()).append("<br/>");
+            }
+            writeError(response, 500, stack.toString());
+        } catch (Throwable t) {
+            writeThrowable(response, t);
+        }
+    }
+
+    public String makeJSONByID(String UUID) throws IOException {
+        ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+        StringBuffer b = new StringBuffer();
+
+        Task t = resultMap.get("UUID");
+        Iterator it = resultMap.entrySet().iterator();
+
+        Set<TaskReturn> trs = new LinkedHashSet<TaskReturn>();
+
+
+        TaskReturn r = new TaskReturn();
+        r.key = UUID;
+        r.name = t.getName();
+        r.origin = t.getOrigin();
+        r.dataType = t.getReturnDataType();
+        r.totalTime = (t.getTotalTime().getTime() + "ms");
+        r.returnCode = t.getReturnCode();
+        if (r.dataType.equalsIgnoreCase("string")) {
+            r.data = new String(t.getReturnData(), "UTF-8");
+        }
+
+        b.append(mapper.writeValueAsString(trs));
+
+        System.out.println("JSON: " + b.toString());
+        return b.toString();
     }
 
     public void getJson(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

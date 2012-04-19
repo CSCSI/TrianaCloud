@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -96,14 +97,14 @@ public class Broker extends TrianaCloudServlet {
             channel.exchangeDeclare(r_exchange, "topic");
         } catch (Exception e) {
             ServletException se = new ServletException(e);
-            logger.fatal("Something Happened!",se);
+            logger.fatal("Something Happened!", se);
             throw se;
         }
     }
 
     public void dispatchTask(Task t) throws IOException {
         ///TODO: Read task metadata to determine which queue to send to (e.g. #.triana)
-        String corrId = UUID.randomUUID().toString();
+        String corrId = t.getUUID();
 
         AMQP.BasicProperties props = new AMQP.BasicProperties
                 .Builder()
@@ -192,6 +193,8 @@ public class Broker extends TrianaCloudServlet {
                 throw new ServletException("Cannot parse multipart request.", e);
             }
 
+            List<String> UUIDList = new ArrayList<String>();
+
             log.debug(content);
             for (int i = 0; i < numTasks; i++) {
                 Task t = new Task();
@@ -201,12 +204,19 @@ public class Broker extends TrianaCloudServlet {
                 t.setOrigin("Broker");
                 t.setDispatchTime(System.currentTimeMillis());
                 t.setRoutingKey(r_key);
+                t.setUUID(UUID.randomUUID().toString());
                 dispatchTask(t);
+                UUIDList.add(t.getUUID());
             }
             //Task t = new Task("call", content.getBytes(),"dart.triana");
             //dispatchTask(t);
-            String ret = "Ok"; ///TODO:do some stuff here
-            writeResponse(response, 200, "Success", ret);
+
+            StringBuilder sb = new StringBuilder();
+            for (String id : UUIDList) {
+                sb.append(id + "\n");
+            }
+            //String ret = "Ok; ///TODO:do some stuff here
+            writeResponse(response, 200, "Success", sb.toString());
 
         } catch (Exception e) {
             e.printStackTrace();

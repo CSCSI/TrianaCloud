@@ -44,6 +44,11 @@ public class Task {
     private String _dataMD5;
     private String _returnDataMD5;
     private String _returnCode;
+    private String _UUID;
+
+    public String getUUID() {
+        return _UUID;
+    }
 
     public String getDataMD5() {
         return _dataMD5;
@@ -87,6 +92,10 @@ public class Task {
 
     public void setFileName(String f) {
         this._fileName = f;
+    }
+
+    public void setUUID(String uuid) {
+        this._UUID = uuid;
     }
 
     public void setDataMD5(String md5) {
@@ -137,7 +146,7 @@ public class Task {
         this._data = data;
     }
 
-    public String getReturnCode(){
+    public String getReturnCode() {
         return _returnCode;
     }
 

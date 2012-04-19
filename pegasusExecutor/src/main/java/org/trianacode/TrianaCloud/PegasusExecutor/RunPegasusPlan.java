@@ -35,11 +35,11 @@ public class RunPegasusPlan {
         setOutputDir();
 
         HashMap<String, ConfigurationResource> flies = getFiles(b);
-        for(String name : flies.keySet()){
-            if(name.equals(dax)){
+        for (String name : flies.keySet()) {
+            if (name.equals(dax)) {
                 daxFile = writeFile(flies.get(name), dax);
             }
-            if (name.equals(properties)){
+            if (name.equals(properties)) {
                 propertiesFile = writeFile(flies.get(name), properties);
             }
         }
@@ -105,15 +105,15 @@ public class RunPegasusPlan {
         return new byte[0];
     }
 
-    private HashMap<String, ConfigurationResource> getFiles(SHIWABundle bundle){
+    private HashMap<String, ConfigurationResource> getFiles(SHIWABundle bundle) {
         HashMap<String, ConfigurationResource> results = new HashMap<String, ConfigurationResource>();
         try {
 
             WorkflowController workflowController = new WorkflowController(bundle);
 
-            for(Configuration configuration : workflowController.getConfigurations()){
+            for (Configuration configuration : workflowController.getConfigurations()) {
                 System.out.println("Config type : " + configuration.getType().getString());
-                if(configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION){
+                if (configuration.getType() == Configuration.ConfigType.DATA_CONFIGURATION) {
                     System.out.println("Received bundle has a data config");
 
                     System.out.println(configuration.getAggregatedResources().size()
@@ -121,7 +121,7 @@ public class RunPegasusPlan {
 
                     System.out.println("Exec config contains "
                             + configuration.getResources().size() + " resources.");
-                    for( ConfigurationResource r : configuration.getResources()){
+                    for (ConfigurationResource r : configuration.getResources()) {
                         results.put(r.getReferableResource().getTitle(), r);
                     }
                     System.out.println(results.size() + " outputs found.");
