@@ -129,6 +129,8 @@ public class Results extends TrianaCloudServlet {
         r.returnCode = t.getReturnCode();
         if (r.dataType.equalsIgnoreCase("string")) {
             r.data = new String(t.getReturnData(), "UTF-8");
+        }else{
+            r.data = t.getReturnData().length;
         }
 
         b.append(mapper.writeValueAsString(trs));
