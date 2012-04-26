@@ -130,7 +130,7 @@ public class Results extends TrianaCloudServlet {
         if (r.dataType.equalsIgnoreCase("string")) {
             r.data = new String(t.getReturnData(), "UTF-8");
         }else{
-            r.data = t.getReturnData().length;
+            r.data = new String("" + t.getReturnData().length);
         }
 
         b.append(mapper.writeValueAsString(trs));
