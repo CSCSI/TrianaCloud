@@ -35,6 +35,11 @@ import org.trianacode.TrianaCloud.Utils.TaskOps;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
+
 
 /*
  * The worker looks for tasks, and executes them. Easy.

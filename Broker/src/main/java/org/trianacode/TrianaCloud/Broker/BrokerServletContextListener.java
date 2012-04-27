@@ -37,6 +37,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 22:55
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
 public class BrokerServletContextListener implements ServletContextListener {
 
     private Logger logger = Logger.getLogger(this.getClass().toString());

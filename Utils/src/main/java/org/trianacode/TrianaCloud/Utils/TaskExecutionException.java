@@ -21,6 +21,11 @@
 
 package org.trianacode.TrianaCloud.Utils;
 
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
+
 public class TaskExecutionException extends Exception {
 ///TODO: This class.
 }

@@ -23,6 +23,11 @@ package org.trianacode.TrianaCloud.Utils;
 
 import org.apache.log4j.Logger;
 
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
+
 public abstract class TaskExecutor {
 
     private Logger logger = Logger.getLogger(this.getClass().toString());

@@ -36,9 +36,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * @author: scmabh
- * @date: Sep 10, 2010
+ * @author Andrew Harrison
+ * @version 1.0.0 Sep 10, 2010
  */
 public class DomPain {
 

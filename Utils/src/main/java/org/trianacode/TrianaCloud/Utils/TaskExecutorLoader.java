@@ -22,7 +22,6 @@
 package org.trianacode.TrianaCloud.Utils;
 
 import org.apache.log4j.Logger;
-
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -33,6 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+
+/**
+ * @author Kieran David Evans & Ian Harvey
+ * @version 1.0.0 Feb 26, 2012
+ */
 
 
 public class TaskExecutorLoader extends URLClassLoader {

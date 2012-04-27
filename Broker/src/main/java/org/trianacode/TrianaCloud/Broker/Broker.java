@@ -52,6 +52,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * Time: 22:12
  * To change this template use File | Settings | File Templates.
  */
+
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
 public class Broker extends TrianaCloudServlet {
 
     private Logger logger = Logger.getLogger(this.getClass().toString());

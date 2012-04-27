@@ -28,6 +28,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
+
 public class TaskOps {
 
     private static Logger logger = Logger.getLogger("org.trianacode.TrianaCloud.Utils.TaskOps");

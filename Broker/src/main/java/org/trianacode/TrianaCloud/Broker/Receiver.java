@@ -33,6 +33,11 @@ import org.trianacode.TrianaCloud.Utils.TaskOps;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
+
 /*
  * The Receiver is a background thread responsible for connecting results back to the task.
  */

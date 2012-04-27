@@ -16,7 +16,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
+/**
+ * @author Kieran David Evans
+ * @version 1.0.0 Feb 26, 2012
+ */
 public class Results extends TrianaCloudServlet {
 
     private Logger logger = Logger.getLogger(this.getClass());
