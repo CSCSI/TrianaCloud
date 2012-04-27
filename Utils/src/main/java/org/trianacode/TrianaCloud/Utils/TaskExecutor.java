@@ -32,7 +32,7 @@ public abstract class TaskExecutor {
 
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
-    private Logger getLogger(){
+    private Logger getLogger() {
         return logger;
     }
 

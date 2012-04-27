@@ -35,6 +35,7 @@ import org.trianacode.TrianaCloud.Utils.TaskOps;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 /**
  * @author Kieran David Evans
  * @version 1.0.0 Feb 26, 2012
@@ -97,7 +98,7 @@ public class Worker {
 
             QueueingConsumer consumer = new QueueingConsumer(channel);
 
-            for(String routingKey : tel.routingKeys){
+            for (String routingKey : tel.routingKeys) {
                 System.out.println(" [x] Routing Key: " + routingKey);
 
                 ///TODO:Grab from argv or config file
@@ -179,7 +180,7 @@ public class Worker {
         ///TODO:Grab a plugin dir from the config file
         String workingDir;
         File f;
-        if(argv.length > 0){
+        if (argv.length > 0) {
             workingDir = argv[0];
             f = new File(workingDir);
         } else {

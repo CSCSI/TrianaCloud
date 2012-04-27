@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @author Kieran David Evans
  * @version 1.0.0 Feb 26, 2012
@@ -132,7 +133,7 @@ public class Results extends TrianaCloudServlet {
         r.returnCode = t.getReturnCode();
         if (r.dataType.equalsIgnoreCase("string")) {
             r.data = new String(t.getReturnData(), "UTF-8");
-        }else{
+        } else {
             r.data = new String("" + t.getReturnData().length);
         }
 

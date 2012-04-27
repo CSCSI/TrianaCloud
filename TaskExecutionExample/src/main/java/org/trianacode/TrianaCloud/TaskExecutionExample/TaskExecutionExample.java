@@ -21,11 +21,10 @@
 
 package org.trianacode.TrianaCloud.TaskExecutionExample;
 
+import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskExecutionException;
 import org.trianacode.TrianaCloud.Utils.TaskExecutor;
-
-import org.apache.log4j.Logger;
 
 
 public class TaskExecutionExample extends TaskExecutor {

@@ -35,7 +35,7 @@ import java.io.IOException;
 /**
  * Run Pegasus-plan with values found in a SHIWA Bundle
  */
-public class PegasusExecutor extends TaskExecutor implements Runnable{
+public class PegasusExecutor extends TaskExecutor implements Runnable {
 
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
@@ -51,7 +51,7 @@ public class PegasusExecutor extends TaskExecutor implements Runnable{
             thread.run();
             thread.join();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Error in executor");
             e.printStackTrace();
         }
