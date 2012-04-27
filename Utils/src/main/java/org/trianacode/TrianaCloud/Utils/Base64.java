@@ -26,6 +26,8 @@ package org.trianacode.TrianaCloud.Utils;
  * @author Andrew Harrison
  * @version 1.0.0 Jan 15, 2011
  */
+
+
 public class Base64 {
 
     private static final char[] S_BASE64CHAR = {

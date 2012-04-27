@@ -25,6 +25,7 @@ package org.trianacode.TrianaCloud.Utils;
  * @author Andrew Harrison
  * @version 1.0.0 Jan 15, 2011
  */
+
 public class HttpException extends Exception {
 
     private int statusCode;

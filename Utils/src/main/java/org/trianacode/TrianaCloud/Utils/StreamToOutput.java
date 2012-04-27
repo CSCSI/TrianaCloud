@@ -6,14 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Ian Harvey
- * Date: 18/04/2012
- * Time: 14:56
- * To change this template use File | Settings | File Templates.
- */
-
-/**
  * @author Ian Harvey
  * @version 1.0.0 Apr 18, 2012
  */
