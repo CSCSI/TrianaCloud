@@ -28,9 +28,7 @@ import java.util.Date;
 /**
  * @author Kieran David Evans
  * @version 1.0.0 Feb 26, 2012
- */
-
-/**
+ *
  * Task encapsulates a task (or job), and any relevant information (e.g. where to send results).
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -9,8 +9,6 @@ import java.io.InputStreamReader;
  * @author Ian Harvey
  * @version 1.0.0 Apr 18, 2012
  */
-
-
 public class StreamToOutput implements Runnable {
 
     private InputStream inputStream;

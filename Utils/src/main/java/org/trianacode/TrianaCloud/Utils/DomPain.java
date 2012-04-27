@@ -40,7 +40,6 @@ import java.util.List;
  * @author Andrew Harrison
  * @version 1.0.0 Sep 10, 2010
  */
-
 public class DomPain {
 
     public static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
