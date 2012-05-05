@@ -91,6 +91,8 @@ public class Results extends TrianaCloudServlet {
 
         if (kvalue == null) {
             System.out.println("UUID is null");
+            writeError(response, 500, "No ID specified.");
+            return;
         }
         if (kvalue.equalsIgnoreCase("")) {
             System.out.println("UUID is blank");
