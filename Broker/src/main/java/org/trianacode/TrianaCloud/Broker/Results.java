@@ -128,7 +128,7 @@ public class Results extends TrianaCloudServlet {
         
         //Iterator it = resultMap.entrySet().iterator();
 
-        //Set<TaskReturn> trs = new LinkedHashSet<TaskReturn>();
+        Set<TaskReturn> trs = new LinkedHashSet<TaskReturn>();
 
 
         TaskReturn r = new TaskReturn();
@@ -143,6 +143,8 @@ public class Results extends TrianaCloudServlet {
         } else {
             r.data = new String("" + t.getReturnData().length);
         }
+        
+        trs.add(r);
 
         b.append(mapper.writeValueAsString(trs));
 
