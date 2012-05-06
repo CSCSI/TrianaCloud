@@ -83,13 +83,13 @@
             <id>github-project-site</id>
             <url>gitsite:git@github.com/keyz182/TrianaCloud.git</url>
         </site>
-	<repository>
-		<id>repo</id>
-		<url>https://github.com/keyz182/maven-repo/raw/master/releases</url>
-	</repository>
-	<snapshotRepository>
-		<id>snapshot-repo</id>
-		<url>https://github.com/keyz182/maven-repo/raw/master/snapshots</url>
-	</snapshotRepository>
+		<repository>
+			<id>repo</id>
+			<url>https://github.com/keyz182/maven-repo/raw/master/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshot-repo</id>
+			<url>https://github.com/keyz182/maven-repo/raw/master/snapshots</url>
+		</snapshotRepository>
     </distributionManagement>
 </project>
