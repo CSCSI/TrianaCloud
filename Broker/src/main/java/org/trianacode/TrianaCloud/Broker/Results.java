@@ -121,9 +121,14 @@ public class Results extends TrianaCloudServlet {
         StringBuffer b = new StringBuffer();
 
         Task t = resultMap.get("UUID");
-        Iterator it = resultMap.entrySet().iterator();
+        
+        if(t==null){
+            return "0";
+        }
+        
+        //Iterator it = resultMap.entrySet().iterator();
 
-        Set<TaskReturn> trs = new LinkedHashSet<TaskReturn>();
+        //Set<TaskReturn> trs = new LinkedHashSet<TaskReturn>();
 
 
         TaskReturn r = new TaskReturn();
