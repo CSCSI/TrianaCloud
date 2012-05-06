@@ -92,4 +92,10 @@
 			<url>https://github.com/keyz182/maven-repo/raw/master/snapshots</url>
 		</snapshotRepository>
     </distributionManagement>
+	<repositories>
+		<repository>
+			<id>keyz182-github-repo</id>
+			<url>https://raw.github.com/keyz182/maven-repo/master/snapshots</url>
+		</repository>
+	</repositories>
 </project>
