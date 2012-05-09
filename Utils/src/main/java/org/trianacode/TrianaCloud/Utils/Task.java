@@ -28,11 +28,16 @@ import java.util.Date;
 /**
  * @author Kieran David Evans
  * @version 1.0.0 Feb 26, 2012
- *
- * Task encapsulates a task (or job), and any relevant information (e.g. where to send results).
+ *          <p/>
+ *          Task encapsulates a task (or job), and any relevant information (e.g. where to send results).
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Task {
+
+    public static final int PENDING = 0;
+    public static final int SENT = 1;
+    public static final int COMPLETE = 2;
+
     ///TODO: Task metadata class.
     ///TODO: add an Options propery. Can be used for anything, e.g. command line args, env properties whatever.
     private String _origin;
@@ -48,6 +53,52 @@ public class Task {
     private String _returnDataMD5;
     private String _returnCode;
     private String _UUID;
+    private int _ID;
+    private int _State;
+    private int _timeToWait;
+    private boolean _NOTASK;
+    private String _commandArguments;
+
+    public void setCommandArguments(String args) {
+        this._commandArguments = args;
+    }
+
+    public String getCommandArguments() {
+        return this._commandArguments;
+    }
+
+    public void setTimeToWait(int i) {
+        this._timeToWait = i;
+    }
+
+    public int getTimeToWait() {
+        return this._timeToWait;
+    }
+
+    public void setNOTASK(boolean i) {
+        this._NOTASK = i;
+    }
+
+    public boolean getNOTASK() {
+        return this._NOTASK;
+    }
+
+
+    public void setState(int s) {
+        this._State = s;
+    }
+
+    public int getState() {
+        return this._State;
+    }
+
+    public int getID() {
+        return _ID;
+    }
+
+    public void setID(int id) {
+        _ID = id;
+    }
 
     public String getUUID() {
         return _UUID;

@@ -21,16 +21,8 @@
 
 package org.trianacode.TrianaCloud.Worker;
 
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
 import org.apache.log4j.Logger;
-import org.trianacode.TrianaCloud.Utils.Task;
-import org.trianacode.TrianaCloud.Utils.TaskExecutor;
-import org.trianacode.TrianaCloud.Utils.TaskExecutorLoader;
-import org.trianacode.TrianaCloud.Utils.TaskOps;
+import org.trianacode.TrianaCloud.Utils.*;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -46,32 +38,16 @@ import java.net.URL;
  * The worker looks for tasks, and executes them. Easy.
  */
 
-public class Worker {
+public class Worker extends RPCClient {
 
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
-    private static boolean continueLoop = true;
-    private static TaskExecutorLoader tel;
+    private boolean continueLoop = true;
+    private TaskExecutorLoader tel;
 
-    public static void main(String[] argv) {
-
-        Connection connection = null;
-        Channel channel;
+    public Worker(String[] argv) {
         try {
             loadPlugins(argv);
-
-            ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("s-vmc.cs.cf.ac.uk");
-            factory.setPort(7000);
-            factory.setUsername("trianacloud");
-            factory.setPassword("trianacloud");
-
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-
-            //Use tc_exchange (TrianaCloud_exchange) in the topic config.
-            ///TODO:Grab this from argv or config file
-            channel.exchangeDeclare("tc_exchange", "topic");
 
             /*
             "dart.triana" is the queue name. If the task is covered by multiple topic bindings, it's duplicated. If
@@ -96,81 +72,63 @@ public class Worker {
             //String routingKey = "*.kieran";
 //            String routingKey = "*.triana";
 
-            QueueingConsumer consumer = new QueueingConsumer(channel);
-
             for (String routingKey : tel.routingKeys) {
                 System.out.println(" [x] Routing Key: " + routingKey);
-
-                ///TODO:Grab from argv or config file
-                String queueName = channel.queueDeclare(routingKey, true, false, true, null).getQueue();
-                channel.queueBind(queueName, "tc_exchange", routingKey);
-
-                //Makes sure tasks are shared properly, this tells rabbit to only grab one message at a time.
-                channel.basicQos(1);
-                channel.basicConsume(queueName, false, consumer);
             }
 
 
-            System.out.println(" [x] Awaiting RPC requests");
-
-            while (continueLoop) {
-                byte[] response = new byte[0];
-
-                QueueingConsumer.Delivery delivery = consumer.nextDelivery();
-
-                BasicProperties props = delivery.getProperties();
-                BasicProperties replyProps = new BasicProperties
-                        .Builder()
-                        .correlationId(props.getCorrelationId())
-                        .build();
-
-                TaskExecutor ex;
-                try {
-                    ///TODO: Use metadata to figure out which Executor to use.
-                    ///TODO: Figure out what wire-protocol to use. Something simple like ASN.1? Or a subset of it?
-
-                    //String message = new String(delivery.getBody());
-                    byte[] message = delivery.getBody();
-                    ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
-                    //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.CommandLineExecutor.Executor");
-
-                    Task t = TaskOps.decodeTask(message);
-                    ex.setTask(t);
-
-                    response = ex.executeTask();
-                } catch (Exception e) {
-                    ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
-                    ///TODO: Two new exeptions for the task executor, one to indicate that the execution failed due to
-                    ///     the data, one to indicate some other error. The former would be ack'ed and sent back, as
-                    ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
-                    ///     config, random error, missile strike).
-                    System.out.println(" [.] " + e.toString());
-                    e.printStackTrace();
-                    response = new byte[0];
-                } finally {
-                    channel.basicPublish("", props.getReplyTo(), replyProps, response);
-                    //Acknowledge that the task has been received. If a crash happens before here, then Rabbit automagically
-                    //sticks the message back in the queue.
-                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-
-                    //TODO bye bye!!
-//                    System.exit(0);
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        }
+    }
+
+    public void run() {
+        System.out.println(" [x] Sending RPC requests.");
+
+        while (continueLoop) {
+            byte[] response;
+            Task t = getTask(tel.routingKeys);
+
+            try {
+                if (t.getNOTASK()) {
+                    int wait = t.getTimeToWait();
+                    System.out.println(" [.] Waiting for " + wait + " Seconds");
+                    sendCompleteTask(TaskOps.encodeTask(t));
+                    Thread.sleep(wait * 1000);
+                    System.out.println(" [x] Resuming.");
+                    continue;
                 }
+
+                TaskExecutor ex;
+                ///TODO: Use metadata to figure out which Executor to use.
+                ///TODO: Figure out what wire-protocol to use. Something simple like ASN.1? Or a subset of it?
+
+                ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
+                //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.CommandLineExecutor.Executor");
+                ex.setTask(t);
+
+                response = ex.executeTask();
+
+                sendCompleteTask(response);
+            } catch (Exception e) {
+                ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
+                ///TODO: Two new exeptions for the task executor, one to indicate that the execution failed due to
+                ///     the data, one to indicate some other error. The former would be ack'ed and sent back, as
+                ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
+                ///     config, random error, missile strike).
+                System.out.println(" [.] " + e.toString());
+                e.printStackTrace();
+                response = new byte[0];
             }
         }
     }
 
-    private static void loadPlugins(String[] argv) throws MalformedURLException {
+    public static void main(String[] argv) {
+        Worker w = new Worker(argv);
+        w.run();
+    }
+
+    private void loadPlugins(String[] argv) throws MalformedURLException {
         System.out.println(" [x] Loading Plugins");
 
         ClassLoader classLoader = Worker.class.getClassLoader();

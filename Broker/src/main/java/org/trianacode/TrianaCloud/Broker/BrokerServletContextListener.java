@@ -28,6 +28,7 @@ import org.trianacode.TrianaCloud.Utils.Task;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -47,15 +48,19 @@ public class BrokerServletContextListener implements ServletContextListener {
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
     private static Receiver receiver;
+    private static RPCServer rpcServer;
     private static ConcurrentHashMap<String, Task> taskMap;
     private static ConcurrentHashMap<String, Task> resultMap;
     private static Thread receiverThread;
+    private static Thread rpcServerThread;
     private static String replyQueue;
 
     private String host;
     private int port;
     private String user;
     private String pass;
+    private String rpc_queue_name;
+    private String vHost;
 
     private ConnectionFactory factory;
 
@@ -66,15 +71,27 @@ public class BrokerServletContextListener implements ServletContextListener {
         port = Integer.parseInt(sc.getInitParameter("rabbitmq.port"));
         user = sc.getInitParameter("rabbitmq.user");
         pass = sc.getInitParameter("rabbitmq.pass");
+        rpc_queue_name = sc.getInitParameter("rabbitmq.rpc_queue_name");
+        vHost = sc.getInitParameter("rabbitmq.vhost");
 
         taskMap = new ConcurrentHashMap<String, Task>();
         resultMap = new ConcurrentHashMap<String, Task>();
 
-        receiver = new Receiver(taskMap, resultMap, host, port, user, pass);
+        receiver = new Receiver(host, port, user, pass, vHost);
+        rpcServer = new RPCServer(host, port, user, pass, vHost, rpc_queue_name);
+
         replyQueue = receiver.init();
+        try {
+            rpcServer.init();
+        } catch (ServletException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         receiverThread = new Thread(receiver);
         receiverThread.start();
+
+        rpcServerThread = new Thread(rpcServer);
+        rpcServerThread.start();
 
         factory = new ConnectionFactory();
         factory.setHost(host);
@@ -86,12 +103,15 @@ public class BrokerServletContextListener implements ServletContextListener {
         sc.setAttribute("taskmap", taskMap);
         sc.setAttribute("replyQueue", replyQueue);
         sc.setAttribute("resultMap", resultMap);
+        sc.setAttribute("rpc_queue_name", rpc_queue_name);
     }
 
     public void contextDestroyed(ServletContextEvent event) {
         receiver.stopRunning();
+        rpcServer.stopRunning();
         try {
             receiverThread.join();
+            rpcServerThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }

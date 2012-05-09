@@ -28,6 +28,7 @@ import com.rabbitmq.client.QueueingConsumer;
 import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.MD5;
 import org.trianacode.TrianaCloud.Utils.Task;
+import org.trianacode.TrianaCloud.Utils.TaskDAO;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
 
 import java.io.IOException;
@@ -56,16 +57,19 @@ public class Receiver implements Runnable {
     private String host;
     private int port;
     private String user;
-    private String pass;
+    private String password;
+    private String vHost;
 
+    private TaskDAO td;
 
-    public Receiver(ConcurrentHashMap t, ConcurrentHashMap r, String host, int port, String user, String pass) {
-        taskMap = t;
-        resultsMap = r;
+    public Receiver(String host, int port, String user, String pass, String vHost) {
         this.host = host;
         this.port = port;
         this.user = user;
-        this.pass = pass;
+        this.password = pass;
+        this.vHost = vHost;
+
+        td = new TaskDAO();
     }
 
     /*
@@ -76,7 +80,10 @@ public class Receiver implements Runnable {
         factory.setHost(host);
         factory.setPort(port);
         factory.setUsername(user);
-        factory.setPassword(pass);
+        factory.setPassword(password);
+        factory.setVirtualHost(vHost);
+        factory.setConnectionTimeout(60);
+
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
@@ -88,11 +95,18 @@ public class Receiver implements Runnable {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return null;
         }
+
+
         return receiveQueueName;
     }
 
     public void stopRunning() {
         keepRunning = false;
+        try {
+            channel.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
 
@@ -103,13 +117,23 @@ public class Receiver implements Runnable {
 
                 String corrid = delivery.getProperties().getCorrelationId();
 
-                Task t = taskMap.get(corrid);
+                //Task t = taskMap.get(corrid);
+
+                Task t = td.getByUUID(corrid);
+
                 Task r = TaskOps.decodeTask(delivery.getBody());
                 if (t == null) {
                     continue;
                 }
 
-                resultsMap.put(corrid, r);
+                t.setReturnData(r.getReturnData());
+                t.setReturnDataType(r.getReturnDataType());
+                t.setReturnCode(r.getReturnCode());
+                t.setReturnDataMD5(r.getReturnDataMD5());
+
+                t.setState(Task.COMPLETE);
+
+                td.save(t);
 
                 System.out.println("Job: " + t.getName() + " took " + t.getTotalTime().getTime());
                 if (r.getReturnDataType().equalsIgnoreCase("string")) {
@@ -125,7 +149,6 @@ public class Receiver implements Runnable {
                     System.out.println("Got     : " + MD5.getMD5Hash(r.getReturnData()));
                 }
 
-                taskMap.remove(corrid);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -19,7 +19,7 @@ public class Executor extends TaskExecutor {
     public byte[] executeTask() throws TaskExecutionException {
         try {
             String line;
-            Process p = Runtime.getRuntime().exec("cmd /c dir");
+            Process p = Runtime.getRuntime().exec("ls -alh");
             BufferedReader bri = new BufferedReader
                     (new InputStreamReader(p.getInputStream()));
             BufferedReader bre = new BufferedReader

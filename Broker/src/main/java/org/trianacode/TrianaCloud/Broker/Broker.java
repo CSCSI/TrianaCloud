@@ -21,18 +21,15 @@
 
 package org.trianacode.TrianaCloud.Broker;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
+import org.trianacode.TrianaCloud.Utils.MD5;
 import org.trianacode.TrianaCloud.Utils.Task;
-import org.trianacode.TrianaCloud.Utils.TaskOps;
+import org.trianacode.TrianaCloud.Utils.TaskDAO;
 import org.trianacode.TrianaCloud.Utils.TrianaCloudServlet;
 
 import javax.servlet.ServletException;
@@ -43,7 +40,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -61,45 +57,25 @@ public class Broker extends TrianaCloudServlet {
 
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
-    public static final String RABBIT_QUEUE = "rabbitmq.queue";
-    public static final String EXCHANGE = "rabbitmq.exchange";
-    public static ConcurrentHashMap<String, Task> taskMap;
+    private TaskDAO td;
 
-
-    private String r_replyQueue;
-    private String r_exchange;
-
-    private Connection connection;
-    private Channel channel;
-    private ConnectionFactory factory;
+    /*
+     * Initialises the Broker class.
+     * Takes care of initializing Hibernate.
+     */
 
     public void init() throws ServletException {
         try {
-            factory = (ConnectionFactory) getServletContext().getAttribute("RabbitMQConnectionFactory");
-            if (factory == null) {
-                logger.fatal("No RabbitMQ factory retrieved from Servlet Context. Cannot go on.");
-                throw new ServletException("No RabbitMQ factory retrieved from Servlet Context. Cannot go on.");
-            }
-            r_exchange = getInitParameter(EXCHANGE);
-            if (r_exchange == null) {
-                logger.fatal("No RabbitMQ exchange defined in init parameter. Cannot go on.");
-                throw new ServletException("No RabbitMQ exchange defined in init parameter. Cannot go on.");
-            }
-            r_replyQueue = (String) getServletContext().getAttribute("replyQueue");
-            if (r_replyQueue == null) {
-                logger.fatal("No RabbitMQ reply queue defined in init parameter. Cannot go on.");
-                throw new ServletException("No RabbitMQ reply queue defined in init parameter. Cannot go on.");
-            }
 
-            taskMap = (ConcurrentHashMap<String, Task>) getServletContext().getAttribute("taskmap");
-            if (taskMap == null) {
-                logger.fatal("Couldn't get Taskmap");
-                throw new ServletException("Couldn't get Taskmap");
-            }
+            ///TODO: Hibernate settings, get them from servlet container?
+            //factory = (ConnectionFactory) getServletContext().getAttribute("RabbitMQConnectionFactory");
+            //if (factory == null) {
+            //    logger.fatal("No RabbitMQ factory retrieved from Servlet Context. Cannot go on.");
+            //    throw new ServletException("No RabbitMQ factory retrieved from Servlet Context. Cannot go on.");
+            //}
+            logger.info("Initializing Broker");
 
-            connection = factory.newConnection();
-            channel = connection.createChannel();
-            channel.exchangeDeclare(r_exchange, "topic");
+            td = new TaskDAO();
         } catch (Exception e) {
             ServletException se = new ServletException(e);
             logger.fatal("Something Happened!", se);
@@ -107,28 +83,30 @@ public class Broker extends TrianaCloudServlet {
         }
     }
 
-    public void dispatchTask(Task t) throws IOException {
+    /*
+     * Inserts a task into the database for deploying to workers.
+     * @param t The task to be inserted.
+     */
+    public void insertTask(Task t) throws IOException {
         ///TODO: Read task metadata to determine which queue to send to (e.g. #.triana)
         String corrId = t.getUUID();
+        t.setState(Task.PENDING);
+        logger.info("Inserting Task");
+        td.create(t);
 
-        AMQP.BasicProperties props = new AMQP.BasicProperties
-                .Builder()
-                .correlationId(corrId)
-                .replyTo(r_replyQueue)
-                .build();
-
-        String routingKey = t.getRoutingKey();
-
-        taskMap.put(corrId, t);
-        channel.basicPublish(r_exchange, routingKey, props, TaskOps.encodeTask(t));
-        System.out.println("Sent job " + corrId + " with payload " + t.getName());
+        System.out.println("Inserted job " + corrId + " with payload " + t.getName());
     }
 
+    /*
+     * Provides the web service endpoint to insert tasks.
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        logger.info("Broker received a request.");
         String pathInfo = isolatePath(request);
         String content = "";
         if (!pathInfo.equalsIgnoreCase("")) {
-            write404Error(response, "Unknonw endpoint");
+            logger.info("Unknown Endpoint");
+            write404Error(response, "Unknown endpoint");
             return;
         }
 
@@ -195,6 +173,7 @@ public class Broker extends TrianaCloudServlet {
                     }
                 }
             } catch (FileUploadException e) {
+                logger.error("Cannot parse multipart request.");
                 throw new ServletException("Cannot parse multipart request.", e);
             }
 
@@ -204,17 +183,17 @@ public class Broker extends TrianaCloudServlet {
             for (int i = 0; i < numTasks; i++) {
                 Task t = new Task();
                 t.setData(data);
+                t.setDataMD5(MD5.getMD5Hash(data));
+                t.setDataType("binary");
                 t.setName(name);
                 t.setFileName(fname);
                 t.setOrigin("Broker");
                 t.setDispatchTime(System.currentTimeMillis());
                 t.setRoutingKey(r_key);
                 t.setUUID(UUID.randomUUID().toString());
-                dispatchTask(t);
+                insertTask(t);
                 UUIDList.add(t.getUUID());
             }
-            //Task t = new Task("call", content.getBytes(),"dart.triana");
-            //dispatchTask(t);
 
             StringBuilder sb = new StringBuilder();
             for (String id : UUIDList) {
@@ -222,6 +201,13 @@ public class Broker extends TrianaCloudServlet {
             }
             //String ret = "Ok; ///TODO:do some stuff here
             writeResponse(response, 200, "Success", sb.toString());
+
+            List<Task> t = td.list();
+
+            for (Task ta : t) {
+                System.out.println(ta.getDispatchTime() + "  " + ta.getState());
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();

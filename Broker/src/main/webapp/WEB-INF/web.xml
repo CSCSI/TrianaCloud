@@ -6,11 +6,11 @@
     <display-name>Archetype Created Web Application</display-name>
     <context-param>
         <param-name>rabbitmq.host</param-name>
-        <param-value>s-vmc.cs.cf.ac.uk</param-value>
+        <param-value>zotac.toaster.dbyz.co.uk</param-value>
     </context-param>
     <context-param>
         <param-name>rabbitmq.port</param-name>
-        <param-value>7000</param-value>
+        <param-value>5672</param-value>
     </context-param>
     <context-param>
         <param-name>rabbitmq.user</param-name>
@@ -19,6 +19,14 @@
     <context-param>
         <param-name>rabbitmq.pass</param-name>
         <param-value>trianacloud</param-value>
+    </context-param>
+    <context-param>
+        <param-name>rabbitmq.vhost</param-name>
+        <param-value>trianacloud</param-value>
+    </context-param>
+    <context-param>
+        <param-name>rabbitmq.rpc_queue_name</param-name>
+        <param-value>trianaloud_rpc_queue</param-value>
     </context-param>
     <listener>
         <listener-class>org.trianacode.TrianaCloud.Broker.BrokerServletContextListener</listener-class>

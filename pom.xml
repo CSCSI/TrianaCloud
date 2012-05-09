@@ -55,6 +55,39 @@
             </extension>
         </extensions>
         <plugins>
+            <!-- ******************************
+            *	BUILD SOURCE FIELS
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ******************************
+            *	BUILD JavaDoc FIELS
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -83,13 +116,13 @@
             <id>github-project-site</id>
             <url>gitsite:git@github.com/keyz182/TrianaCloud.git</url>
         </site>
-		<repository>
-			<id>repo</id>
-			<url>https://github.com/keyz182/maven-repo/raw/master/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshot-repo</id>
-			<url>https://github.com/keyz182/maven-repo/raw/master/snapshots</url>
-		</snapshotRepository>
+        <!--<repository>
+              <id>nexus</id>
+              <url>http://s-vmc.cs.cf.ac.uk/nexus/content/repositories/trianacloud/</url>
+          </repository>
+          <snapshotRepository>
+              <id>nexus</id>
+              <url>http://s-vmc.cs.cf.ac.uk/nexus/content/repositories/snapshots/</url>
+          </snapshotRepository>-->
     </distributionManagement>
 </project>

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.trianacode.TrianaCloud.Utils.Task;
+import org.trianacode.TrianaCloud.Utils.TaskDAO;
 import org.trianacode.TrianaCloud.Utils.TrianaCloudServlet;
 
 import javax.servlet.ServletException;
@@ -13,9 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author Kieran David Evans
@@ -25,7 +25,7 @@ public class Results extends TrianaCloudServlet {
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    public static ConcurrentHashMap<String, Task> resultMap;
+    private TaskDAO td;
 
     private class TaskReturn {
         public String name;
@@ -39,12 +39,13 @@ public class Results extends TrianaCloudServlet {
 
     public void init() throws ServletException {
         try {
-            resultMap = (ConcurrentHashMap<String, Task>) getServletContext().getAttribute("resultMap");
+            /*resultMap = (ConcurrentHashMap<String, Task>) getServletContext().getAttribute("resultMap");
             if (resultMap == null) {
                 ServletException se = new ServletException("Couldn't get resultMap");
                 logger.error("Couldn't get the ResultMap", se);
                 throw se;
-            }
+            } */
+            td = new TaskDAO();
         } catch (Exception e) {
             ServletException se = new ServletException("Couldn't get resultMap");
             logger.error("Something Happened!", se);
@@ -120,12 +121,12 @@ public class Results extends TrianaCloudServlet {
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
         StringBuffer b = new StringBuffer();
 
-        Task t = resultMap.get("UUID");
-        
-        if(t==null){
+        Task t = td.getByUUID(UUID);//resultMap.get("UUID");
+
+        if (t == null) {
             return "0";
         }
-        
+
         //Iterator it = resultMap.entrySet().iterator();
 
         Set<TaskReturn> trs = new LinkedHashSet<TaskReturn>();
@@ -143,7 +144,7 @@ public class Results extends TrianaCloudServlet {
         } else {
             r.data = new String("" + t.getReturnData().length);
         }
-        
+
         trs.add(r);
 
         b.append(mapper.writeValueAsString(trs));
@@ -174,25 +175,27 @@ public class Results extends TrianaCloudServlet {
     public String makeJSON() throws IOException {
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
         StringBuffer b = new StringBuffer();
-        Iterator it = resultMap.entrySet().iterator();
+
+        List<Task> tasks = td.list();
+        Iterator it = tasks.iterator();
 
         Set<TaskReturn> trs = new LinkedHashSet<TaskReturn>();
 
         while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
-            String key = (String) pairs.getKey();
-            Task t = (Task) pairs.getValue();
+            Task t = (Task) it.next();
 
             if (t != null) {
                 TaskReturn r = new TaskReturn();
-                r.key = key;
+                r.key = t.getUUID();
                 r.name = t.getName();
                 r.origin = t.getOrigin();
                 r.dataType = t.getReturnDataType();
                 r.totalTime = (t.getTotalTime().getTime() + "ms");
                 r.returnCode = t.getReturnCode();
-                if (r.dataType.equalsIgnoreCase("string")) {
-                    r.data = new String(t.getReturnData(), "UTF-8");
+                if (r.dataType != null) {
+                    if (r.dataType.equalsIgnoreCase("string")) {
+                        r.data = new String(t.getReturnData(), "UTF-8");
+                    }
                 }
                 trs.add(r);
             }
@@ -216,7 +219,7 @@ public class Results extends TrianaCloudServlet {
             System.out.println("Key is blank");
         }
 
-        Task t = resultMap.get(kvalue);
+        Task t = td.getByUUID(kvalue);//resultMap.get(kvalue);
         if (t == null) {
             System.out.println("Task is null");
         }
@@ -239,12 +242,13 @@ public class Results extends TrianaCloudServlet {
             response.setContentType("text/html");
 
             StringBuffer b = new StringBuffer();
-            Iterator it = resultMap.entrySet().iterator();
+            List<Task> tasks = td.list();
+
+            Iterator it = tasks.iterator();
 
             while (it.hasNext()) {
-                Map.Entry pairs = (Map.Entry) it.next();
-                String key = (String) pairs.getKey();
-                Task t = (Task) pairs.getValue();
+                Task t = (Task) it.next();
+                String key = t.getUUID();
 
                 if (t != null) {
                     b.append("<div class=\"Title\">");
