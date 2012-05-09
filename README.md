@@ -1,7 +1,9 @@
 Triana Cloud
 ============
 
-Description of Triana Cloud
+This is a branch of the code we were using befor I refactored to use the RPC Style with RabbitMQ, and hibernate for persistance.
+
+Description of Triana Cloud 
 
 Installation
 ------------
