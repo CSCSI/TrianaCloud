@@ -1,0 +1,62 @@
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.trianacode.TrianaCloud.Utils.Task" table="Task" lazy="false">
+        <id name="ID" type="int" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="UUID">
+            <column name="uuid"/>
+        </property>
+        <property name="DataMD5">
+            <column name="datamd5"/>
+        </property>
+        <property name="ReturnDataMD5">
+            <column name="returndatamd5"/>
+        </property>
+        <property name="DataType">
+            <column name="datatype"/>
+        </property>
+        <property name="ReturnData" type="binary">
+            <column sql-type="LONGBLOB" name="returndata"/>
+        </property>
+        <property name="ReturnDataType">
+            <column name="returndatatype"/>
+        </property>
+        <property name="Origin">
+            <column name="origin"/>
+        </property>
+        <property name="Name">
+            <column name="name"/>
+        </property>
+        <property name="DispatchTime">
+            <column name="dispatchtime"/>
+        </property>
+        <property name="RoutingKey">
+            <column name="routingkey"/>
+        </property>
+        <property name="FileName">
+            <column name="filename"/>
+        </property>
+        <property name="Data" type="binary">
+            <column sql-type="LONGBLOB" name="data"/>
+        </property>
+        <property name="ReturnCode">
+            <column name="returncode"/>
+        </property>
+        <property name="State">
+            <column name="state"/>
+        </property>
+        <property name="TimeToWait">
+            <column name="timetowait"/>
+        </property>
+        <property name="NOTASK" type="boolean">
+            <column sql-type="bit" not-null="true" name="notask"/>
+        </property>
+        <property name="CommandArguments">
+            <column name="commandarguments"/>
+        </property>
+    </class>
+</hibernate-mapping>
