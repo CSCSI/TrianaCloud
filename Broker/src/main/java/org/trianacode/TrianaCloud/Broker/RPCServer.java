@@ -5,6 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.ShutdownSignalException;
 import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.RPCClient;
 import org.trianacode.TrianaCloud.Utils.Task;
@@ -157,6 +158,8 @@ public class RPCServer implements Runnable {
                     }
 
                 }//else if some other rpc call/method/thing
+            } catch(ShutdownSignalException e){
+                System.out.println("Shutting down the RPC Server");
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("Error", e);
