@@ -25,6 +25,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.ShutdownSignalException;
 import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.MD5;
 import org.trianacode.TrianaCloud.Utils.Task;
@@ -149,6 +150,8 @@ public class Receiver implements Runnable {
                     System.out.println("Got     : " + MD5.getMD5Hash(r.getReturnData()));
                 }
 
+            } catch (ShutdownSignalException e){
+                System.out.println("Shutting down receiver");
             } catch (Exception e) {
                 e.printStackTrace();
             }
