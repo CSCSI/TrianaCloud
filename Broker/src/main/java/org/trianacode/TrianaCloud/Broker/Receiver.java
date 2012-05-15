@@ -25,6 +25,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.ShutdownSignalException;
 import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.MD5;
 import org.trianacode.TrianaCloud.Utils.Task;
@@ -93,6 +94,11 @@ public class Receiver implements Runnable {
 
     public void stopRunning() {
         keepRunning = false;
+        try {
+            channel.close();
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
 
@@ -126,6 +132,8 @@ public class Receiver implements Runnable {
                 }
 
                 taskMap.remove(corrid);
+            } catch (ShutdownSignalException e){
+                System.out.println("Shutting down receiver");
             } catch (Exception e) {
                 e.printStackTrace();
             }
