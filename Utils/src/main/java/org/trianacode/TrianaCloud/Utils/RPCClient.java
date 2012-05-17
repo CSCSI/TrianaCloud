@@ -38,6 +38,7 @@ public class RPCClient {
             factory.setVirtualHost("trianacloud");
             factory.setUsername("trianacloud");
             factory.setPassword("trianacloud");
+            factory.setRequestedHeartbeat(60);
             connection = factory.newConnection();
             channel = connection.createChannel();
 
