@@ -26,6 +26,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import com.rabbitmq.client.MissedHeartbeatException;
 import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.Task;
 import org.trianacode.TrianaCloud.Utils.TaskExecutor;
@@ -52,8 +53,20 @@ public class Worker {
 
     private static boolean continueLoop = true;
     private static TaskExecutorLoader tel;
-
+    
     public static void main(String[] argv) {
+        while (continueLoop){
+            try{
+                go(argv);
+            }catch (MissedHeartbeatException e) {
+                System.out.println(" [-] Heartbeat Missed! Restarting!");
+                tel = null;
+            }
+        }
+    }
+
+
+    public static void go(String[] argv) throws MissedHeartbeatException {
 
         Connection connection = null;
         Channel channel;
