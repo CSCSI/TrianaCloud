@@ -82,10 +82,30 @@ public class Executor extends TaskExecutor {
             task.setReturnData(out);
             task.setReturnDataMD5(MD5.getMD5Hash(task.getReturnData()));
             task.setReturnCode("0");
+
+
+            ///HACK: Hack to remove results folder
+            removeResults();
             return TaskOps.encodeTask(task);  //To change body of implemented methods use File | Settings | File Templates.
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return new byte[0];
+        }
+    }
+
+    public void removeResults() {
+        File res = new File("/home/ubuntu/results");
+        if (!res.exists())
+            return;
+        if (!res.isDirectory())
+            res.delete();
+
+        String[] list = res.list();
+
+
+        for (String file: list){
+            File f = new File(res,file);
+            f.delete();
         }
     }
 
