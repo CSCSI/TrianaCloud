@@ -65,6 +65,7 @@ public class Worker {
             factory.setPort(7000);
             factory.setUsername("trianacloud");
             factory.setPassword("trianacloud");
+            factory.setRequestedHeartbeat(60);
 
             connection = factory.newConnection();
             channel = connection.createChannel();
