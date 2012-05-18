@@ -149,10 +149,10 @@ public class Worker {
                     byte[] message = delivery.getBody();
                     ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
                     //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.CommandLineExecutor.Executor");
-                    timeOut(" [x] Executing Task at ");
+                    timeOutput(" [x] Executing Task at ");
                     Task t = TaskOps.decodeTask(message);
                     ex.setTask(t);
-                    timeOut(" [x] Finished executing Task at ");
+                    timeOutput(" [x] Finished executing Task at ");
                     response = ex.executeTask();
                 } catch (Exception e) {
                     ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
