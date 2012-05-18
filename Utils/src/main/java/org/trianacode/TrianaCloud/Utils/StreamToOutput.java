@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Ian Harvey
@@ -27,6 +29,11 @@ public class StreamToOutput implements Runnable {
         thread = new Thread(this);
         thread.run();
     }
+    
+    private String getTimeStamp() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd_HH-mm-ss-SS_z");
+        return dateFormat.format(new Date());
+    }
 
     @Override
     public void run() {
@@ -34,7 +41,7 @@ public class StreamToOutput implements Runnable {
         try {
             String str;
             while ((str = inreader.readLine()) != null) {
-                System.out.println(" >> " + description + " : " + str);
+                System.out.println("[" + getTimeStamp() + " >> " + description + " : " + str);
             }
         } catch (IOException e) {
             System.out.println("Error with stream " + description + " closing");
