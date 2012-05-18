@@ -33,6 +33,8 @@ import org.trianacode.TrianaCloud.Utils.TaskExecutor;
 import org.trianacode.TrianaCloud.Utils.TaskExecutorLoader;
 import org.trianacode.TrianaCloud.Utils.TaskOps;
 
+import java.util.*;
+import java.text.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -147,10 +149,10 @@ public class Worker {
                     byte[] message = delivery.getBody();
                     ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
                     //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.CommandLineExecutor.Executor");
-
+                    timeOut(" [x] Executing Task at ");
                     Task t = TaskOps.decodeTask(message);
                     ex.setTask(t);
-
+                    timeOut(" [x] Finished executing Task at ");
                     response = ex.executeTask();
                 } catch (Exception e) {
                     ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
@@ -182,6 +184,15 @@ public class Worker {
                 }
             }
         }
+    }
+    
+    public static void timeOutput(String s){
+        String d;
+        Format formatter;
+        Date date = new Date();
+        formatter = new SimpleDateFormat("hh:mm:ss");
+        d = formatter.format(date);
+        System.out.println(s+d);
     }
 
     private static void loadPlugins(String[] argv) throws MalformedURLException {
