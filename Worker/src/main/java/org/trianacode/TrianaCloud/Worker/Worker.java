@@ -152,8 +152,9 @@ public class Worker {
                     timeOutput(" [x] Executing Task at ");
                     Task t = TaskOps.decodeTask(message);
                     ex.setTask(t);
-                    timeOutput(" [x] Finished executing Task at ");
+
                     response = ex.executeTask();
+                    timeOutput(" [x] Finished executing Task at ");
                 } catch (Exception e) {
                     ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
                     ///TODO: Two new exeptions for the task executor, one to indicate that the execution failed due to
