@@ -1,9 +1,9 @@
 #!/bin/bash
 #at some stage, this will be some clever code to do codey things with code
 
-echo "10.0.0.4 i9.cscloud.cf.ac.uk" >> /etc/hosts
+echo "10.1.0.11 i6.cscloud.cf.ac.uk" >> /etc/hosts
 
-wget http://i9.cscloud.cf.ac.uk/webbed-nfs/nfs/zips/home.tar.gz -O /tmp/home.tar.gz
+wget http://i6.cscloud.cf.ac.uk/webbed-nfs/nfs/zips/home.tar.gz -O /tmp/home.tar.gz
 
 mv /home/ubuntu/.ssh /tmp
 
