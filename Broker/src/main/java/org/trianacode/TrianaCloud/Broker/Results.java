@@ -218,8 +218,8 @@ public class Results extends TrianaCloudServlet {
 
         Task t = resultMap.get(kvalue);
         if (t == null) {
-            System.out.println("Task is null");
-            write404Error(response, "File Not Found!");
+            response.setStatus(404);
+            response.setContentType("text/html");
             return;
 
         }
