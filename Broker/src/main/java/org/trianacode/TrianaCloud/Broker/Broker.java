@@ -218,7 +218,7 @@ public class Broker extends TrianaCloudServlet {
 
             StringBuilder sb = new StringBuilder();
             for (String id : UUIDList) {
-                sb.append(id + "\n");
+                sb.append("<uuid>" +id + "</uuid>");
             }
             //String ret = "Ok; ///TODO:do some stuff here
             writeResponse(response, 200, "Success", sb.toString());
