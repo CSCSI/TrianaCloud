@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2012, SHIWA
+ *
+ *     This file is part of TrianaCloud.
+ *
+ *     TrianaCloud is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     TrianaCloud is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with TrianaCloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.trianacode.TrianaCloud.Utils;
 
 import org.hibernate.HibernateException;
@@ -7,15 +26,10 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
-/**
- * Created with IntelliJ IDEA.
- * User: keyz
- * Date: 09/05/12
- * Time: 11:05
- * To change this template use File | Settings | File Templates.
- */
+
 public class DAO {
     private static SessionFactory sessionFactory;
+    @SuppressWarnings("FieldCanBeLocal")
     private static ServiceRegistry serviceRegistry;
 
     private static final ThreadLocal session = new ThreadLocal();

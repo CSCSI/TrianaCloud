@@ -1,18 +1,22 @@
-/*!
- * jQuery JavaScript Library v1.7.1
- * http://jquery.com/
+/*
+ * Copyright (c) 2012, SHIWA
  *
- * Copyright 2011, John Resig
- * Dual licensed under the MIT or GPL Version 2 licenses.
- * http://jquery.org/license
+ *     This file is part of TrianaCloud.
  *
- * Includes Sizzle.js
- * http://sizzlejs.com/
- * Copyright 2011, The Dojo Foundation
- * Released under the MIT, BSD, and GPL Licenses.
+ *     TrianaCloud is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
  *
- * Date: Mon Nov 21 21:11:03 2011 -0500
+ *     TrianaCloud is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with TrianaCloud.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 (function (window, undefined) {
 
 // Use the correct document accordingly with window argument (sandbox)

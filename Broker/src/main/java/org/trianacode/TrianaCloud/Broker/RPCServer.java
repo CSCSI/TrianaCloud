@@ -1,11 +1,26 @@
+/*
+ * Copyright (c) 2012, SHIWA
+ *
+ *     This file is part of TrianaCloud.
+ *
+ *     TrianaCloud is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     TrianaCloud is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with TrianaCloud.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.trianacode.TrianaCloud.Broker;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client.*;
 import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.RPCClient;
 import org.trianacode.TrianaCloud.Utils.Task;
@@ -16,13 +31,6 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Arrays;
 
-/**
- * Created with IntelliJ IDEA.
- * User: keyz
- * Date: 08/05/12
- * Time: 16:38
- * To change this template use File | Settings | File Templates.
- */
 public class RPCServer implements Runnable {
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
@@ -158,7 +166,7 @@ public class RPCServer implements Runnable {
                     }
 
                 }//else if some other rpc call/method/thing
-            } catch(ShutdownSignalException e){
+            } catch (ShutdownSignalException e) {
                 System.out.println("Shutting down the RPC Server");
             } catch (Exception e) {
                 e.printStackTrace();

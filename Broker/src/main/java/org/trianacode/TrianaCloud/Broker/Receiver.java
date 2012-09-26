@@ -1,31 +1,25 @@
 /*
+ * Copyright (c) 2012, SHIWA
  *
- *  * Copyright - TrianaCloud
- *  * Copyright (C) 2012. Kieran Evans. All Rights Reserved.
- *  *
- *  * This program is free software; you can redistribute it and/or
- *  * modify it under the terms of the GNU General Public License
- *  * as published by the Free Software Foundation; either version 2
- *  * of the License, or (at your option) any later version.
- *  *
- *  * This program is distributed in the hope that it will be useful,
- *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  * GNU General Public License for more details.
- *  *
- *  * You should have received a copy of the GNU General Public License
- *  * along with this program; if not, write to the Free Software
- *  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *     This file is part of TrianaCloud.
  *
+ *     TrianaCloud is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     TrianaCloud is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with TrianaCloud.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.trianacode.TrianaCloud.Broker;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.QueueingConsumer;
-import com.rabbitmq.client.ShutdownSignalException;
+import com.rabbitmq.client.*;
 import org.apache.log4j.Logger;
 import org.trianacode.TrianaCloud.Utils.MD5;
 import org.trianacode.TrianaCloud.Utils.Task;
@@ -38,11 +32,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Kieran David Evans
  * @version 1.0.0 Feb 26, 2012
+ *          The Receiver is a background thread responsible for connecting results back to the task.
  */
-
-/*
- * The Receiver is a background thread responsible for connecting results back to the task.
- */
+@SuppressWarnings("FieldCanBeLocal")
 public class Receiver implements Runnable {
     private Logger logger = Logger.getLogger(this.getClass().toString());
 
@@ -150,7 +142,7 @@ public class Receiver implements Runnable {
                     System.out.println("Got     : " + MD5.getMD5Hash(r.getReturnData()));
                 }
 
-            } catch (ShutdownSignalException e){
+            } catch (ShutdownSignalException e) {
                 System.out.println("Shutting down receiver");
             } catch (Exception e) {
                 e.printStackTrace();
