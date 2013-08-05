@@ -16,3 +16,8 @@ Create queues for each routing key you'll be using.
 
 Doing it this way means that if there are no workers running, tasks are still held in the queues,
 rather than there being no queue, or queues being deleted.
+
+
+## Documentation
+
+Javadocs - http://cscsi.github.io/TrianaCloud/
