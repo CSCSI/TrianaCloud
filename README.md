@@ -21,3 +21,6 @@ rather than there being no queue, or queues being deleted.
 ## Documentation
 
 Javadocs - http://cscsi.github.io/TrianaCloud/
+
+
+[![Build Status](http://build.dbyz.co.uk/buildStatus/icon?job=TrianaCloud)](http://build.dbyz.co.uk/job/TrianaCloud/)
