@@ -22,7 +22,7 @@
     <parent>
         <artifactId>TrianaCloud</artifactId>
         <groupId>org.trianacode.TrianaCloud</groupId>
-        <version>1.0</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -113,5 +113,10 @@
             <id>github-project-site</id>
             <url>gitsite:git@github.com/keyz182/TrianaCloud.git/Worker</url>
         </site>
+        <snapshotRepository>
+          <id>archiva.snapshots</id>
+          <name>Internal Snapshot Repository</name>
+          <url>http://archiva.dbyz.co.uk/repository/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>
