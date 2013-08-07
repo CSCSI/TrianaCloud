@@ -115,7 +115,7 @@ public class RPCClient {
 
             return new Integer(ret[0]);
         } catch (Exception e) {
-            logger.error("Error sending complete task");
+            logger.error("Error sending complete task",e);
             return -1;
         }
     }
