@@ -47,7 +47,7 @@ public class RPCClient {
     public RPCClient() {
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("zotac.toaster.dbyz.co.uk");
+            factory.setHost("i86.cscloud.cf.ac.uk");
             factory.setVirtualHost("trianacloud");
             factory.setUsername("trianacloud");
             factory.setPassword("trianacloud");
