@@ -39,7 +39,12 @@ public class Worker extends RPCClient {
     private boolean continueLoop = true;
     private TaskExecutorLoader tel;
 
+    private String executor = "org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor";
+
     public Worker(String[] argv) {
+        if (argv.length > 1){
+            this.executor = argv[1];
+        }
         try {
             loadPlugins(argv);
 
@@ -67,7 +72,7 @@ public class Worker extends RPCClient {
 //            String routingKey = "*.triana";
 
             for (String routingKey : tel.routingKeys) {
-                System.out.println(" [x] Routing Key: " + routingKey);
+                logger.info(" [x] Routing Key: " + routingKey);
             }
 
 
@@ -77,7 +82,7 @@ public class Worker extends RPCClient {
     }
 
     public void run() {
-        System.out.println(" [x] Sending RPC requests.");
+        logger.info(" [x] Sending RPC requests.");
 
         while (continueLoop) {
             byte[] response;
@@ -86,10 +91,10 @@ public class Worker extends RPCClient {
             try {
                 if (t.getNOTASK()) {
                     int wait = t.getTimeToWait();
-                    System.out.println(" [.] Waiting for " + wait + " Seconds");
+                    logger.info(" [.] Waiting for " + wait + " Seconds");
                     sendCompleteTask(TaskOps.encodeTask(t));
                     Thread.sleep(wait * 1000);
-                    System.out.println(" [x] Resuming.");
+                    logger.info(" [x] Resuming.");
                     continue;
                 }
 
@@ -97,7 +102,7 @@ public class Worker extends RPCClient {
                 ///TODO: Use metadata to figure out which Executor to use.
                 ///TODO: Figure out what wire-protocol to use. Something simple like ASN.1? Or a subset of it?
 
-                ex = tel.getExecutor("org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor");
+                ex = tel.getExecutor(this.executor);
                 //TaskExecutor ex = tel.getExecutor("org.trianacode.TrianaCloud.CommandLineExecutor.Executor");
                 ex.setTask(t);
 
@@ -110,7 +115,7 @@ public class Worker extends RPCClient {
                 ///     the data, one to indicate some other error. The former would be ack'ed and sent back, as
                 ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
                 ///     config, random error, missile strike).
-                System.out.println(" [.] " + e.toString());
+                logger.error(" [.] " + e.toString());
                 e.printStackTrace();
                 response = new byte[0];
             }
@@ -123,7 +128,7 @@ public class Worker extends RPCClient {
     }
 
     private void loadPlugins(String[] argv) throws MalformedURLException {
-        System.out.println(" [x] Loading Plugins");
+        logger.info(" [x] Loading Plugins");
 
         ClassLoader classLoader = Worker.class.getClassLoader();
 
@@ -139,7 +144,7 @@ public class Worker extends RPCClient {
             workingDir = System.getProperty("user.dir");
             f = new File(workingDir + File.separator + "depsdir");
         }
-        System.out.println("Addon path : " + f.getAbsolutePath());
+        logger.info("Addon path : " + f.getAbsolutePath());
         urls[0] = f.toURI().toURL();
         //Load plugins using the fancy-pants loader hacked together using the code from iharvey and the intarwebs
         tel = new TaskExecutorLoader(urls, classLoader);
