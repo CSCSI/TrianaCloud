@@ -103,6 +103,8 @@ public class Worker extends RPCClient {
                     logger.info(" [x] Resuming.");
                     continue;
                 }
+                
+                logger.info(" [x] Executing");
 
                 TaskExecutor ex;
                 ///TODO: Use metadata to figure out which Executor to use.
