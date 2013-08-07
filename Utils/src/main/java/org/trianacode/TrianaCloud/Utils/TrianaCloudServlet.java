@@ -55,7 +55,8 @@ public class TrianaCloudServlet extends HttpServlet {
         DomPain.transform(doc, response.getOutputStream());
     }
 
-    public void writeResponse(HttpServletResponse response, int status, String title, String message) throws IOException {
+    public void writeResponse(HttpServletResponse response, int status, String title, String message)
+            throws IOException {
         response.setStatus(status);
         response.setContentType("text/html");
         response.getWriter().println(createResponse(title, message));
@@ -175,7 +176,8 @@ public class TrianaCloudServlet extends HttpServlet {
         return q;
     }
 
-    protected void setAuthenticationDetails(HttpServletRequest request, HttpServletResponse response, Map<String, String> map) throws HttpException {
+    protected void setAuthenticationDetails(HttpServletRequest request, HttpServletResponse response,
+                                            Map<String, String> map) throws HttpException {
         String authInfo = request.getHeader("Authorization");
         if (authInfo == null) {
             response.addHeader("WWW-Authenticate", "Basic Realm=\"/\"");

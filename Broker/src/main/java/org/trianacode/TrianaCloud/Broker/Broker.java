@@ -168,7 +168,7 @@ public class Broker extends TrianaCloudServlet {
 
             List<String> UUIDList = new ArrayList<String>();
 
-            log.debug(content);
+            logger.debug(content);
             for (int i = 0; i < numTasks; i++) {
                 Task t = new Task();
                 t.setData(data);
@@ -200,7 +200,7 @@ public class Broker extends TrianaCloudServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(e);
+            logger.error(e);
             StringBuffer stack = new StringBuffer("Error: " + e.getMessage() + "<br/>");
             StackTraceElement[] trace = e.getStackTrace();
             for (StackTraceElement element : trace) {

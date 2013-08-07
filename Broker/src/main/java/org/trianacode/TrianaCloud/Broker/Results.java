@@ -124,7 +124,7 @@ public class Results extends TrianaCloudServlet {
             response.getWriter().println(makeJSONByID(kvalue));
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(e);
+            logger.error(e);
             StringBuffer stack = new StringBuffer("Error: " + e.getMessage() + "<br/>");
             StackTraceElement[] trace = e.getStackTrace();
             for (StackTraceElement element : trace) {
@@ -179,7 +179,7 @@ public class Results extends TrianaCloudServlet {
             response.getWriter().println(makeJSON());
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(e);
+            logger.error(e);
             StringBuffer stack = new StringBuffer("Error: " + e.getMessage() + "<br/>");
             StackTraceElement[] trace = e.getStackTrace();
             for (StackTraceElement element : trace) {
@@ -293,7 +293,7 @@ public class Results extends TrianaCloudServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.error(e);
+            logger.error(e);
             StringBuffer stack = new StringBuffer("Error: " + e.getMessage() + "<br/>");
             StackTraceElement[] trace = e.getStackTrace();
             for (StackTraceElement element : trace) {
