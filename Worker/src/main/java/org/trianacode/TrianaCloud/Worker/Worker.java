@@ -88,7 +88,7 @@ public class Worker extends RPCClient {
             try{
                 Thread.sleep(1000);
             }catch (Exception e){
-                logger.error(e)
+                logger.error(e);
             }
 
             byte[] response;
