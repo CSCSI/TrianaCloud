@@ -85,6 +85,10 @@ public class Worker extends RPCClient {
         logger.info(" [x] Sending RPC requests.");
 
         while (continueLoop) {
+            try{
+                Thread.sleep(1000);
+            }catch (Exception e){}
+
             byte[] response;
             Task t = getTask(tel.routingKeys);
 
