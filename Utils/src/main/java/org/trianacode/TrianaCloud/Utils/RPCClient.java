@@ -113,7 +113,7 @@ public class RPCClient {
 
             byte[] ret = call(ArrayUtils.addAll(method, message));
 
-            return new Integer(ret[0]);
+            return 1;
         } catch (Exception e) {
             logger.error("Error sending complete task",e);
             return -1;
