@@ -21,6 +21,7 @@ package org.trianacode.TrianaCloud.Utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 
 import javax.servlet.http.HttpServlet;
@@ -44,7 +45,7 @@ public class TrianaCloudServlet extends HttpServlet {
     public static final String HTTP_BASIC_AUTH_USER = "http-basic-auth-user";
     public static final String HTTP_BASIC_AUTH_PASSWORD = "http-basic-auth-password";
 
-    protected static Log log = LogFactory.getLog("org.sintero.server.SinteroServlet");
+    private static Logger logger = Logger.getLogger(DAO.class.toString());;
 
 
     public void writeDocument(HttpServletResponse response, Document doc) throws IOException {
@@ -167,7 +168,7 @@ public class TrianaCloudServlet extends HttpServlet {
                 try {
                     q.put(pair.substring(0, eq), URLDecoder.decode(pair.substring(eq + 1, pair.length()), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    logger.error(e);
                 }
             }
         }
@@ -192,8 +193,8 @@ public class TrianaCloudServlet extends HttpServlet {
         if (colon > -1) {
             String user = auth.substring(0, colon);
             String pass = auth.substring(colon + 1, auth.length());
-            log.info(" user entered username=" + user);
-            log.info(" user entered password=" + pass);
+            logger.info(" user entered username=" + user);
+            //logger.info(" user entered password=" + pass);
             map.put(HTTP_BASIC_AUTH_USER, user);
             map.put(HTTP_BASIC_AUTH_PASSWORD, pass);
         } else {

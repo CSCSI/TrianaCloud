@@ -167,7 +167,7 @@ public class RPCServer implements Runnable {
 
                 }//else if some other rpc call/method/thing
             } catch (ShutdownSignalException e) {
-                System.out.println("Shutting down the RPC Server");
+                logger.error("Shutting down the RPC Server");
             } catch (Exception e) {
                 e.printStackTrace();
                 logger.error("Error", e);

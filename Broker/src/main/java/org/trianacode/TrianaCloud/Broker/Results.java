@@ -110,12 +110,12 @@ public class Results extends TrianaCloudServlet {
         String kvalue = request.getParameter(pname);
 
         if (kvalue == null) {
-            System.out.println("UUID is null");
+            logger.info("UUID is null");
             writeError(response, 500, "No ID specified.");
             return;
         }
         if (kvalue.equalsIgnoreCase("")) {
-            System.out.println("UUID is blank");
+            logger.info("UUID is blank");
         }
         try {
             response.setStatus(200);
@@ -168,7 +168,7 @@ public class Results extends TrianaCloudServlet {
 
         b.append(mapper.writeValueAsString(trs));
 
-        System.out.println("JSON: " + b.toString());
+        logger.info("JSON: " + b.toString());
         return b.toString();
     }
 
@@ -222,7 +222,7 @@ public class Results extends TrianaCloudServlet {
 
         b.append(mapper.writeValueAsString(trs));
 
-        System.out.println("JSON: " + b.toString());
+        logger.info("JSON: " + b.toString());
         return b.toString();
     }
 
@@ -232,15 +232,15 @@ public class Results extends TrianaCloudServlet {
         String kvalue = request.getParameter(pname);
 
         if (kvalue == null) {
-            System.out.println("Key is null");
+            logger.info("Key is null");
         }
         if (kvalue.equalsIgnoreCase("")) {
-            System.out.println("Key is blank");
+            logger.info("Key is blank");
         }
 
         Task t = td.getByUUID(kvalue);//resultMap.get(kvalue);
         if (t == null) {
-            System.out.println("Task is null");
+            logger.info("Task is null");
         }
 
         byte[] data = t.getReturnData();

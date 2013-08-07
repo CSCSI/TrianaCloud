@@ -184,7 +184,7 @@ public class TaskDAO extends DAO {
             q.setMaxResults(maxResults);
             List<Task> t = q.list();
 
-            System.out.println(t.size());
+            //System.out.println(t.size());
             commit();
             return t;
         } catch (HibernateException e) {

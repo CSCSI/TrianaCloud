@@ -19,6 +19,7 @@
 
 package org.trianacode.TrianaCloud.Utils;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -39,6 +40,7 @@ import java.util.List;
  * @version 1.0.0 Sep 10, 2010
  */
 public class DomPain {
+    private static Logger logger = Logger.getLogger(DomPain.class.toString());
 
     public static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
     public static final String NS_XML = "http://www.w3.org/XML/1998/namespace";
@@ -53,7 +55,7 @@ public class DomPain {
             DocumentBuilder db = dbf.newDocumentBuilder();
             doc = db.newDocument();
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return doc;
     }
@@ -66,9 +68,9 @@ public class DomPain {
             DocumentBuilder db = dbf.newDocumentBuilder();
             doc = db.parse(stream);
         } catch (ParserConfigurationException e) {
-            e.printStackTrace();
+            logger.error(e);
         } catch (SAXException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         return doc;
     }
@@ -264,7 +266,7 @@ public class DomPain {
 
     public static void xmlnsAttribute(Element element, String pref, String uri) {
         if (uri == null) return;
-        System.out.println("DomPain.xmlnsAttribute SETTING XMLSN FOR PREFIX:" + pref + " AND NAMESPACE " + uri);
+        logger.info("DomPain.xmlnsAttribute SETTING XMLSN FOR PREFIX:" + pref + " AND NAMESPACE " + uri);
         element.setAttributeNS(NS_XMLNS, "xmlns:" + pref, uri);
     }
 

@@ -128,22 +128,22 @@ public class Receiver implements Runnable {
 
                 td.save(t);
 
-                System.out.println("Job: " + t.getName() + " took " + t.getTotalTime().getTime());
+                logger.info("Job: " + t.getName() + " took " + t.getTotalTime().getTime());
                 if (r.getReturnDataType().equalsIgnoreCase("string")) {
-                    System.out.println("Return Data MD5");
-                    System.out.println("Expected: " + r.getReturnDataMD5());
-                    System.out.println("Got     : " + MD5.getMD5Hash(r.getReturnData()));
-                    System.out.println("Return Data:");
+                    logger.info("Return Data MD5");
+                    logger.info("Expected: " + r.getReturnDataMD5());
+                    logger.info("Got     : " + MD5.getMD5Hash(r.getReturnData()));
+                    logger.info("Return Data:");
                     String d = new String(r.getReturnData(), "UTF-8");
-                    System.out.println(d);
+                    logger.info(d);
                 } else {
-                    System.out.println("Return Data MD5");
-                    System.out.println("Expected: " + r.getReturnDataMD5());
-                    System.out.println("Got     : " + MD5.getMD5Hash(r.getReturnData()));
+                    logger.info("Return Data MD5");
+                    logger.info("Expected: " + r.getReturnDataMD5());
+                    logger.info("Got     : " + MD5.getMD5Hash(r.getReturnData()));
                 }
 
             } catch (ShutdownSignalException e) {
-                System.out.println("Shutting down receiver");
+                logger.error("Shutting down receiver");
             } catch (Exception e) {
                 e.printStackTrace();
             }

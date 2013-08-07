@@ -53,9 +53,9 @@ public class TaskExecutorLoader extends URLClassLoader {
         try {
             findJars();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
-        System.out.println("\nFound " + addons.size() + " addon(s).\n");
+        logger.info("\nFound " + addons.size() + " addon(s).\n");
     }
 
     private void findJars() throws ClassNotFoundException, URISyntaxException {
@@ -71,7 +71,7 @@ public class TaskExecutorLoader extends URLClassLoader {
                 return !file.isHidden() && file.getName().endsWith(".jar");
             }
         });
-        System.out.println("Found " + jars.length + " jars in addon folder.");
+        logger.info("Found " + jars.length + " jars in addon folder.");
 
         URL[] urls = new URL[jars.length];
         for (int i = 0; i < jars.length; i++) {
@@ -88,7 +88,7 @@ public class TaskExecutorLoader extends URLClassLoader {
                 JarFile jarFile = new JarFile(jar);
                 ZipEntry config = jarFile.getEntry("META-INF/config");
                 if (config != null) {
-                    System.out.println("Found META-INF/services/ folder");
+                    logger.info("Found META-INF/services/ folder");
                     InputStream zin = jarFile.getInputStream(config);
                     BufferedReader reader = new
                             BufferedReader(new InputStreamReader(zin));
@@ -102,7 +102,7 @@ public class TaskExecutorLoader extends URLClassLoader {
                             try {
                                 if (!done.contains(line)) {
 
-                                    System.out.println("Registering addon class : " + line);
+                                    logger.info("Registering addon class : " + line);
                                     Class cls = this.loadClass(line);
                                     if (TaskExecutor.class.isAssignableFrom(cls)) {
                                         addons.put(line, cls);
@@ -112,15 +112,15 @@ public class TaskExecutorLoader extends URLClassLoader {
                                     done.add(line);
                                 }
                             } catch (Exception e1) {
-                                System.out.println("Exception thrown trying to load service provider class " + line);
+                                logger.error("Exception thrown trying to load service provider class " + line);
                             }
                         }
                     }
                 } else {
-                    System.out.println("no entries in META-INF/config file");
+                    logger.info("no entries in META-INF/config file");
                 }
             } catch (IOException ignored) {
-                System.out.println("IOException : " + jar.getName());
+                logger.error("IOException : " + jar.getName());
             }
         }
     }

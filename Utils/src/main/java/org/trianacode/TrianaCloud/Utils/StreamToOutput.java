@@ -19,6 +19,8 @@
 
 package org.trianacode.TrianaCloud.Utils;
 
+import org.apache.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +31,7 @@ import java.io.InputStreamReader;
  * @version 1.0.0 Apr 18, 2012
  */
 public class StreamToOutput implements Runnable {
+    private Logger logger = Logger.getLogger(this.getClass().toString());
 
     private InputStream inputStream;
     private String description;
@@ -53,17 +56,17 @@ public class StreamToOutput implements Runnable {
         try {
             String str;
             while ((str = inreader.readLine()) != null) {
-                System.out.println(" >> " + description + " : " + str);
+                logger.info(" >> " + description + " : " + str);
             }
         } catch (IOException e) {
-            System.out.println("Error with stream " + description + " closing");
+            logger.error("Error with stream " + description + " closing");
         } finally {
             try {
                 inreader.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
-            System.out.println("Closed streamReader " + description);
+            logger.info("Closed streamReader " + description);
         }
     }
 }

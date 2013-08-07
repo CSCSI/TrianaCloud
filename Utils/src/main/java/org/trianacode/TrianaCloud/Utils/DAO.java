@@ -19,6 +19,7 @@
 
 package org.trianacode.TrianaCloud.Utils;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -28,6 +29,8 @@ import org.hibernate.service.ServiceRegistryBuilder;
 
 
 public class DAO {
+    private static Logger logger = Logger.getLogger(DAO.class.toString());
+
     private static SessionFactory sessionFactory;
     @SuppressWarnings("FieldCanBeLocal")
     private static ServiceRegistry serviceRegistry;
@@ -44,8 +47,7 @@ public class DAO {
             return sessionFactory;
         } catch (Throwable ex) {
             // Make sure you log the exception, as it might be swallowed
-            System.err.println("Initial SessionFactory creation failed." + ex);
-            ex.printStackTrace();
+            logger.error("Initial SessionFactory creation failed.",ex);
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -80,12 +82,12 @@ public class DAO {
         try {
             getSession().getTransaction().rollback();
         } catch (HibernateException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         }
         try {
             getSession().close();
         } catch (HibernateException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         }
         DAO.session.set(null);
     }

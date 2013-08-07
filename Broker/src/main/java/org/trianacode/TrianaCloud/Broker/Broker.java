@@ -83,7 +83,7 @@ public class Broker extends TrianaCloudServlet {
         logger.info("Inserting Task");
         td.create(t);
 
-        System.out.println("Inserted job " + corrId + " with payload " + t.getName());
+        logger.info("Inserted job " + corrId + " with payload " + t.getName());
     }
 
     /*
@@ -194,7 +194,7 @@ public class Broker extends TrianaCloudServlet {
             List<Task> t = td.list();
 
             for (Task ta : t) {
-                System.out.println(ta.getDispatchTime() + "  " + ta.getState());
+                logger.info(ta.getDispatchTime() + "  " + ta.getState());
             }
 
 
