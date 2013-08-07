@@ -87,7 +87,9 @@ public class Worker extends RPCClient {
         while (continueLoop) {
             try{
                 Thread.sleep(1000);
-            }catch (Exception e){}
+            }catch (Exception e){
+                logger.error(e)
+            }
 
             byte[] response;
             Task t = getTask(tel.routingKeys);
@@ -120,7 +122,7 @@ public class Worker extends RPCClient {
                 ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
                 ///     config, random error, missile strike).
                 logger.error(" [.] " + e.toString());
-                e.printStackTrace();
+                logger.error(e);
                 response = new byte[0];
             }
         }
