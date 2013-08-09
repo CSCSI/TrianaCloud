@@ -42,6 +42,10 @@ public class Worker extends RPCClient {
     private String executor = "org.trianacode.TrianaCloud.TrianaTaskExecutor.Executor";
 
     public Worker(String[] argv) {
+        super();
+        if(didFailToConnect){
+            return;
+        }
         if (argv.length > 1){
             this.executor = argv[1];
         }
@@ -102,6 +106,7 @@ public class Worker extends RPCClient {
                     continue;
                 }
 
+                logger.info(" [x] Executing Task");
                 TaskExecutor ex;
                 ///TODO: Use metadata to figure out which Executor to use.
                 ///TODO: Figure out what wire-protocol to use. Something simple like ASN.1? Or a subset of it?
@@ -112,15 +117,17 @@ public class Worker extends RPCClient {
 
                 response = ex.executeTask();
 
+                logger.info(" [x] Task Complete");
                 sendCompleteTask(response);
+                logger.info(" [x] Response sent");
             } catch (Exception e) {
                 ///TODO: filter the errors. Worker errors should skip the Ack, and allow the task to be redone.
                 ///TODO: Two new exeptions for the task executor, one to indicate that the execution failed due to
                 ///     the data, one to indicate some other error. The former would be ack'ed and sent back, as
                 ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
                 ///     config, random error, missile strike).
-                logger.error(" [.] " + e.toString());
-                e.printStackTrace();
+                logger.error(" [.] " + e);
+                //e.printStackTrace();
                 response = new byte[0];
             }
         }
@@ -128,7 +135,10 @@ public class Worker extends RPCClient {
 
     public static void main(String[] argv) {
         Worker w = new Worker(argv);
-        w.run();
+        if(!w.didFailToConnect){
+            w.run();
+        }
+        System.out.println("Failed to connect to Queue");
     }
 
     private void loadPlugins(String[] argv) throws MalformedURLException {

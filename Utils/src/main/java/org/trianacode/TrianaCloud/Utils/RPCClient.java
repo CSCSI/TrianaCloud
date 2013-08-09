@@ -43,6 +43,7 @@ public class RPCClient {
     public static final String RETURN_TASK = "rettask";
 
     public static final String NOTASK = "notask";
+    public boolean didFailToConnect = true;
 
     public RPCClient() {
         try {
@@ -51,6 +52,7 @@ public class RPCClient {
             factory.setVirtualHost("trianacloud");
             factory.setUsername("trianacloud");
             factory.setPassword("trianacloud");
+            factory.setPort(7002);
             factory.setRequestedHeartbeat(60);
             connection = factory.newConnection();
             channel = connection.createChannel();
@@ -58,6 +60,8 @@ public class RPCClient {
             replyQueueName = channel.queueDeclare().getQueue();
             consumer = new QueueingConsumer(channel);
             channel.basicConsume(replyQueueName, true, consumer);
+
+            didFailToConnect = false;
         } catch (Exception e) {
             logger.fatal("Error connecting to Rabbit while initialising RPCClient", e);
         }
@@ -107,16 +111,16 @@ public class RPCClient {
         }
     }
 
-    public int sendCompleteTask(byte[] message) {
+    public boolean sendCompleteTask(byte[] message) {
         try {
             byte[] method = RETURN_TASK.getBytes();
 
             byte[] ret = call(ArrayUtils.addAll(method, message));
 
-            return new Integer(ret[0]);
+            return true;
         } catch (Exception e) {
-            logger.error("Error sending complete task");
-            return -1;
+            logger.error("Error sending complete task",e);
+            return false;
         }
     }
 

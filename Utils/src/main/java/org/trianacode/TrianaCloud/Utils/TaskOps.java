@@ -52,9 +52,9 @@ public class TaskOps {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         mapper.writeValue(o, t);
         byte[] b = o.toByteArray();
-        if (b == null) {
-            logger.debug("Encoded Task is null");
-            throw new IOException("Encoded Task is null!");
+        if (b == null || b.length == 0) {
+            logger.debug("Encoded Task is null or zero length");
+            throw new IOException("Encoded Task is null or zero length!");
         }
         return b;
     }
