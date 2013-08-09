@@ -47,12 +47,13 @@ public class RPCClient {
 
     public RPCClient() {
         try {
+            //TODO: Config file!
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost("i86.cscloud.cf.ac.uk");
             factory.setVirtualHost("trianacloud");
             factory.setUsername("trianacloud");
             factory.setPassword("trianacloud");
-            factory.setPort(7002);
+            //factory.setPort(7002);
             factory.setRequestedHeartbeat(60);
             connection = factory.newConnection();
             channel = connection.createChannel();
@@ -74,6 +75,8 @@ public class RPCClient {
     private byte[] call(byte[] message) throws Exception {
         byte[] response = null;
         String corrId = java.util.UUID.randomUUID().toString();
+
+        logger.info("CorrID: "+corrId);
 
         BasicProperties props = new BasicProperties
                 .Builder()
