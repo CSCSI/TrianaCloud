@@ -120,6 +120,10 @@ public class TaskDAO extends DAO {
             q.setString("state", "" + Task.PENDING);
             q.setMaxResults(1);
             Task t = (Task) q.uniqueResult();
+            if(t==null){
+                commit();
+                return null;
+            }
             t.setState(Task.SENT);
             getSession().update(t);
             commit();

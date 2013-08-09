@@ -91,7 +91,9 @@ public class Worker extends RPCClient {
         while (continueLoop) {
             try{
                 Thread.sleep(1000);
-            }catch (Exception e){}
+            }catch (Exception e){
+                logger.error(e);
+            }
 
             byte[] response;
             Task t = getTask(tel.routingKeys);
@@ -105,6 +107,8 @@ public class Worker extends RPCClient {
                     logger.info(" [x] Resuming.");
                     continue;
                 }
+                
+                logger.info(" [x] Executing");
 
                 logger.info(" [x] Executing Task");
                 TaskExecutor ex;
@@ -126,8 +130,10 @@ public class Worker extends RPCClient {
                 ///     the data, one to indicate some other error. The former would be ack'ed and sent back, as
                 ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
                 ///     config, random error, missile strike).
-                logger.error(" [.] " + e);
-                //e.printStackTrace();
+
+                logger.error(" [.] " + e.toString());
+                logger.error(e);
+
                 response = new byte[0];
             }
         }
