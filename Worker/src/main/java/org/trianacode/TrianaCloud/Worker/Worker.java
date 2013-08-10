@@ -81,7 +81,7 @@ public class Worker extends RPCClient {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.fatal(e);
         }
     }
 
@@ -131,7 +131,6 @@ public class Worker extends RPCClient {
                 ///     it's a user error (i.e. the data is bad). The latter would indicate any other errors (bad
                 ///     config, random error, missile strike).
 
-                logger.error(" [.] " + e.toString());
                 logger.error(e);
 
                 response = new byte[0];

@@ -193,9 +193,9 @@ public class Broker extends TrianaCloudServlet {
 
             List<Task> t = td.list();
 
-            for (Task ta : t) {
+            /*for (Task ta : t) {
                 logger.info(ta.getDispatchTime() + "  " + ta.getState());
-            }
+            } */
 
 
         } catch (Exception e) {

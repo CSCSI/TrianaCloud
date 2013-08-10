@@ -76,8 +76,6 @@ public class RPCClient {
         byte[] response = null;
         String corrId = java.util.UUID.randomUUID().toString();
 
-        logger.info("CorrID: "+corrId);
-
         BasicProperties props = new BasicProperties
                 .Builder()
                 .correlationId(corrId)
