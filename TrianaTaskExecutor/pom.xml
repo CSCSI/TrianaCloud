@@ -128,14 +128,10 @@
         <!--</dependency>-->
     </dependencies>
     <distributionManagement>
-        <site>
-            <id>github-project-site</id>
-            <url>gitsite:git@github.com/keyz182/TrianaCloud.git/TrianaTaskExecutor</url>
-        </site>
         <snapshotRepository>
-          <id>archiva.snapshots</id>
-          <name>Internal Snapshot Repository</name>
-          <url>http://archiva.dbyz.co.uk/repository/snapshots/</url>
+            <id>archiva.snapshots</id>
+            <name>Internal Snapshot Repository</name>
+            <url>http://triana.cs.cf.ac.uk/archiva/repository/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
